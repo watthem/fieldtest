@@ -1,0 +1,49 @@
+{
+	"name": "debugging-session",
+	"schemaVersion": "1.0",
+	"constraints": {
+		"execution": {
+			"maxTokens": 4096,
+			"maxLatency": "2000ms",
+			"maxMemory": "512MB"
+		},
+		"artifacts": {
+			"diffSize": {
+				"max": 80,
+				"preferred": 40
+			},
+			"requiredOutput": ["patch", "explanation"]
+		},
+		"tools": {
+			"required": ["typescript_analyzer"],
+			"optional": ["git_patch", "test_runner"]
+		},
+		"memory": {
+			"trace": "required",
+			"persistence": "jsonl",
+			"retention": "session"
+		}
+	},
+	"assertions": [
+		{
+			"id": "output-validation",
+			"expression": "output.includes('patch')",
+			"severity": "error"
+		},
+		{
+			"id": "memory-validation",
+			"expression": "session.memory.contains('stacktrace')",
+			"severity": "warning"
+		},
+		{
+			"id": "performance",
+			"expression": "session.duration < 5000",
+			"severity": "info"
+		}
+	],
+	"metrics": {
+		"successRate": "assertions.passed / assertions.total",
+		"efficiency": "1 - (tokens.used / constraints.execution.maxTokens)",
+		"precision": "custom.function('evaluatePatchQuality')"
+	}
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"stringSchema.d.ts","sourceRoot":"","sources":["stringSchema.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,mBAAmB,CAAC;AAG1D,MAAM,WAAW,YAAa,SAAQ,gBAAgB,CAAC,MAAM,CAAC;IAC5D,IAAI,EAAE,QAAQ,CAAC;IACf,OAAO,EAAE,MAAM,CAAC;CACjB;AAGD,wBAAgB,YAAY,CAAC,OAAO,GAAE,MAAuB,GAAG,YAAY,CAkB3E"}

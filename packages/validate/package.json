@@ -1,0 +1,61 @@
+{
+	"name": "@fieldtest/validate",
+	"version": "0.1.0",
+	"description": "Validation utilities and pre-built schemas for the FieldTest toolkit",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./dist/index.js",
+			"import": "./dist/index.mjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"sideEffects": false,
+	"files": ["dist/**", "README.md", "CHANGELOG.md"],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"clean": "rimraf dist",
+		"lint": "eslint src --ext .ts",
+		"test": "vitest run"
+	},
+	"keywords": [
+		"fieldtest",
+		"validation",
+		"schema",
+		"markdown",
+		"content-validation",
+		"typescript"
+	],
+	"homepage": "https://github.com/westmarkdev/prod/tree/main/fieldtest/packages/validate",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/westmarkdev/prod.git",
+		"directory": "fieldtest/packages/validate"
+	},
+	"bugs": {
+		"url": "https://github.com/westmarkdev/prod/issues"
+	},
+	"author": "Matthew Hendricks <matthew@westmark.dev>",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"devDependencies": {
+		"@types/node": "^18.17.15",
+		"eslint": "^8.49.0",
+		"rimraf": "^5.0.0",
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2",
+		"vitest": "^0.34.4"
+	},
+	"dependencies": {
+		"@fieldtest/core": "workspace:^",
+		"zod": "^3.22.4"
+	}
+}
