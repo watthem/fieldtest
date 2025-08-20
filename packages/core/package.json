@@ -1,7 +1,7 @@
 {
 	"name": "@fieldtest/core",
-	"version": "0.1.0",
-	"description": "Core validation utilities for the FieldTest toolkit - markdown processing with standardized schema validation",
+	"version": "1.0.0",
+	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
@@ -22,15 +22,17 @@
 		"test": "vitest run"
 	},
 	"keywords": [
-		"fieldtest",
 		"validation",
-		"markdown",
+		"typescript",
 		"schema",
+		"data-pipeline",
+		"api-testing", 
+		"integration-testing",
 		"standard-schema",
-		"frontmatter",
-		"content-processing"
+		"quality-assurance",
+		"ci-cd"
 	],
-	"homepage": "https://github.com/watthem/fieldtest",
+	"homepage": "https://fieldtest.watthem.blog",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/watthem/fieldtest.git"

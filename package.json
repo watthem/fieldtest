@@ -1,20 +1,20 @@
 {
   "name": "@fieldtest/core",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "A comprehensive TypeScript validation toolkit for content management and schema validation across modern frameworks",
+  "description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
   "keywords": [
     "validation",
-    "typescript",
+    "typescript", 
     "schema",
-    "content-management",
-    "markdown",
-    "astro",
-    "nextjs",
+    "data-pipeline",
+    "api-testing",
+    "integration-testing",
     "standard-schema",
-    "toolkit"
+    "quality-assurance",
+    "ci-cd"
   ],
-  "homepage": "https://github.com/watthem/fieldtest/tree/main/fieldtest",
+  "homepage": "https://fieldtest.watthem.blog",
   "repository": {
     "type": "git",
     "url": "https://github.com/watthem/fieldtest.git",
