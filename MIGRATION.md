@@ -1,26 +1,24 @@
-# FKit → FieldTest Migration Guide
+# FKit / @fieldtest/* → @watthem/fieldtest Migration Guide
 
 ## Overview
 
-**All FKit code is now under FieldTest. Use `@fieldtest/*` for all validation and schema work.**
+**All FKit and `@fieldtest/*` modules have been consolidated into a single package: `@watthem/fieldtest`.**
 
-This migration consolidates the FKit and FieldTest projects into a single, unified toolkit for TypeScript validation, schema management, and content processing.
+This migration unifies the former FKit and FieldTest packages into one toolkit for TypeScript validation, schema management, and content processing. All exports are now available from `@watthem/fieldtest`.
 
 ## 🚀 What Changed
 
 ### Package Name Changes
 
-| Old (FKit) | New (FieldTest) | Description |
-|------------|-----------------|-------------|
-| `@fieldtest/core` | `@fieldtest/core` | Core SDK functionality |
-| `@fieldtest/validate` | `@fieldtest/validate` | Validation utilities |
-| `@fieldtest/registry` | `@fieldtest/registry` | Schema registry |
-| `@fieldtest/examples` | `fieldtest/packages/examples` | Usage examples |
-| `@fieldtest/fieldtest-demo` | `@fieldtest/fieldtest-demo` | Demo package |
+| Old (FKit or FieldTest) | New (@watthem/fieldtest) | Description |
+|-------------------------|--------------------------|-------------|
+| `@fieldtest/core`       | `@watthem/fieldtest`     | Core SDK functionality |
+| `@fieldtest/validate`   | `@watthem/fieldtest`     | Validation utilities |
+| `@fieldtest/registry`   | `@watthem/fieldtest`     | Schema registry |
 
 ### Import Statement Updates
 
-**Before (FKit):**
+**Before (FKit or `@fieldtest/*`):**
 
 ```typescript
 import { parseMarkdown, FkitDocument } from '@fieldtest/core';
@@ -28,12 +26,10 @@ import { validateWithSchema } from '@fieldtest/validate';
 import { loadSchema } from '@fieldtest/registry';
 ```
 
-**After (FieldTest):**
+**After (`@watthem/fieldtest`):**
 
 ```typescript
-import { parseMarkdown, FieldTestDocument } from '@fieldtest/core';
-import { validateWithSchema } from '@fieldtest/validate';
-import { loadSchema } from '@fieldtest/registry';
+import { parseMarkdown, FieldTestDocument, validateWithSchema, loadSchema } from '@watthem/fieldtest';
 ```
 
 ### Type Name Changes
@@ -45,19 +41,9 @@ import { loadSchema } from '@fieldtest/registry';
 
 ```
 fieldtest/
-├── packages/
-│   ├── core/              # @fieldtest/core - Core SDK
-│   ├── validate/          # @fieldtest/validate - Validation utilities
-│   ├── registry/          # @fieldtest/registry - Schema registry
-│   ├── shared/            # @fieldtest/shared - Shared utilities
-│   ├── validation-lib/    # @fieldtest/validation-lib - Extended validation
-│   ├── integrations/      # MCP server, Obsidian tools
-│   ├── examples/          # Usage examples and demos
-│   └── fieldtest-demo/    # Demo applications
-├── apps/
-│   ├── astro-site/        # Astro.js demo
-│   └── next-app/          # Next.js demo
-└── docs/                  # Documentation
+├── src/                  # Consolidated source for @watthem/fieldtest
+├── packages/             # Legacy modules (core, validate, registry, etc.) now internal
+└── docs/                 # Documentation
 ```
 
 ## 🎯 What to Use Going Forward
@@ -65,30 +51,29 @@ fieldtest/
 ### For Schema Validation
 
 ```typescript
-import { validateWithSchema } from '@fieldtest/validate';
-import { marketingCopySchema } from '@fieldtest/validate';
+import { validateWithSchema, marketingCopySchema } from '@watthem/fieldtest';
 ```
 
 ### For Markdown Processing
 
 ```typescript
-import { parseMarkdown, serializeMarkdown } from '@fieldtest/core';
+import { parseMarkdown, serializeMarkdown } from '@watthem/fieldtest';
 ```
 
 ### For Schema Registry
 
 ```typescript
-import { loadUserSchema, getBuiltInSchema } from '@fieldtest/registry';
+import { loadUserSchema, getBuiltInSchema } from '@watthem/fieldtest';
 ```
 
 ### For Framework Integration
 
 ```typescript
 // Astro
-import { validateAstroContent } from '@fieldtest/validate';
+import { validateAstroContent } from '@watthem/fieldtest';
 
-// Next.js  
-import { validateNextContent } from '@fieldtest/validate';
+// Next.js
+import { validateNextContent } from '@watthem/fieldtest';
 ```
 
 ## 🔧 Integration Tools
@@ -97,7 +82,7 @@ import { validateNextContent } from '@fieldtest/validate';
 
 - **Location:** `packages/integrations/mcp/fieldtest-mcp-server/`
 - **Usage:** AI agent integration for content validation
-- **Updated:** Now uses `@fieldtest/*` packages internally
+- **Updated:** Now uses `@watthem/fieldtest` internally
 
 ### Obsidian Integration
 
@@ -106,28 +91,30 @@ import { validateNextContent } from '@fieldtest/validate';
 
 ## ⚠️ Breaking Changes
 
-1. **Package Names:** All `@fieldtest/*` imports must be updated to `@fieldtest/*`
+1. **Package Names:** All FKit and `@fieldtest/*` imports must be updated to `@watthem/fieldtest`
 2. **Type Names:** `FkitDocument` → `FieldTestDocument`
 3. **Import Paths:** Some internal import paths have been reorganized
 
 ## 🚨 Action Required
 
-**If you have existing code using FKit:**
+**If you have existing code using FKit or `@fieldtest/*`:**
 
 1. **Update package.json dependencies:**
 
    ```diff
    - "@fieldtest/core": "^0.1.0"
    - "@fieldtest/validate": "^0.1.0"
-   + "@fieldtest/core": "workspace:^"
-   + "@fieldtest/validate": "workspace:^"
+   - "@fieldtest/registry": "^0.1.0"
+   + "@watthem/fieldtest": "workspace:^"
    ```
 
 2. **Update import statements:**
 
    ```bash
    # Find and replace across your codebase
-   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\//@fieldtest\//g'
+   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/core/@watthem\/fieldtest/g'
+   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/validate/@watthem\/fieldtest/g'
+   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/registry/@watthem\/fieldtest/g'
    find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
    ```
 
@@ -140,20 +127,21 @@ import { validateNextContent } from '@fieldtest/validate';
 ## ✅ Benefits of Consolidation
 
 - **Single Source of Truth:** All validation tools in one place
-- **Reduced Complexity:** No more confusion between FKit vs FieldTest
+- **Reduced Complexity:** No more confusion between FKit vs multiple FieldTest packages
 - **Better DX:** Consistent naming and patterns
 - **Easier Maintenance:** Single codebase to maintain
 - **Improved Performance:** Shared dependencies and optimizations
 
 ## 🎉 What's Next
 
-- **Use `@fieldtest/*` for ALL new validation work**
-- **Migrate existing `@fieldtest/*` imports to `@fieldtest/*`**
+- **Use `@watthem/fieldtest` for ALL new validation work**
+- **Migrate existing `@fieldtest/*` imports to `@watthem/fieldtest`**
 - **Reference this guide when onboarding new team members**
-- **Update documentation and examples to use FieldTest patterns**
+- **Update documentation and examples to use `@watthem/fieldtest` patterns**
 
 ---
 
-**Remember: All FKit functionality lives in FieldTest now. There's no reason to go back to the old patterns.**
+**Remember: All FKit and `@fieldtest/*` functionality now ships in `@watthem/fieldtest`. There's no reason to go back to the old packages.**
 
 *Migration completed: January 2025*
+
