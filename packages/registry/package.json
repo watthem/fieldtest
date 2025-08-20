@@ -10,6 +10,11 @@
 			"require": "./dist/index.js",
 			"import": "./dist/index.mjs",
 			"types": "./dist/index.d.ts"
+		},
+		"./obsidian-bases": {
+			"require": "./dist/obsidian-bases-schema.js",
+			"import": "./dist/obsidian-bases-schema.mjs",
+			"types": "./dist/obsidian-bases-schema.d.ts"
 		}
 	},
 	"sideEffects": false,
@@ -23,7 +28,7 @@
 		"example": "ts-node -O '{\"module\":\"commonjs\"}' standard-schema.example.ts",
 		"run-examples": "ts-node run-examples.ts"
 	},
-	"keywords": ["fieldtest", "markdown", "schema", "registry"],
+	"keywords": ["fieldtest", "markdown", "schema", "registry", "obsidian", "bases"],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
@@ -36,6 +41,7 @@
 	},
 	"dependencies": {
 		"@fieldtest/core": "workspace:^",
-		"@fieldtest/validate": "workspace:^"
+		"@fieldtest/validate": "workspace:^",
+		"zod": "^3.22.4"
 	}
 }

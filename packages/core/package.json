@@ -1,5 +1,5 @@
 {
-	"name": "@westmarkdev/fieldtest-core",
+	"name": "@fieldtest/core",
 	"version": "0.1.0",
 	"description": "Core validation utilities for the FieldTest toolkit - markdown processing with standardized schema validation",
 	"main": "./dist/index.js",
@@ -30,21 +30,21 @@
 		"frontmatter",
 		"content-processing"
 	],
-	"homepage": "https://github.com/westmarkdev/fieldtest",
+	"homepage": "https://github.com/watthem/fieldtest",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/westmarkdev/fieldtest.git"
+		"url": "https://github.com/watthem/fieldtest.git"
 	},
 	"bugs": {
-		"url": "https://github.com/westmarkdev/fieldtest/issues"
+		"url": "https://github.com/watthem/fieldtest/issues"
 	},
-	"author": "Matthew Hendricks <matthew@westmark.dev>",
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
 	"license": "MIT",
 	"engines": {
 		"node": ">=18.0.0"
 	},
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com"
+		"access": "public"
 	},
 	"devDependencies": {
 		"@types/node": "^18.17.15",
