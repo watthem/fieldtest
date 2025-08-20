@@ -1,5 +1,5 @@
 {
-	"name": "@fieldtest/core",
+	"name": "@watthem/fieldtest",
 	"version": "1.0.0",
 	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
 	"main": "./dist/index.js",
