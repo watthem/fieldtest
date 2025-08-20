@@ -1,7 +1,5 @@
 # FieldTest Validation Toolkit
 
-> **🚀 MIGRATION COMPLETE:** All FKit code is now under FieldTest. Use `@fieldtest/*` for all validation and schema work. See [MIGRATION.md](./MIGRATION.md) for details.
-
 A comprehensive TypeScript validation toolkit for content management and schema validation across modern frameworks. FieldTest provides powerful markdown processing, schema validation, and content organization tools in a unified, framework-agnostic package.
 
 ## Overview
@@ -53,6 +51,12 @@ fieldtest/
 
 ## Getting Started
 
+### Quick Start
+
+```bash
+npm install @watthem/fieldtest
+```
+
 ### Prerequisites
 
 - Node.js 18+
@@ -78,38 +82,20 @@ npx turbo build
 pnpm test
 ```
 
-## Key Packages
+## Package
 
-### @fieldtest/core
-
-Core markdown processing and schema utilities, providing the foundation for all other packages. Includes:
+`@watthem/fieldtest` bundles the core validation engine, schema registry, and framework integrations into a single, cohesive package:
 
 - Markdown parsing and serialization
-- Standard Schema interfaces and utilities
-- Core types and validation helpers
+- Validation utilities and pre-built schemas
+- Schema registry and management
+- Integrations like MCP Server and Obsidian tooling
 
-### @fieldtest/validate
+## History
 
-Validation utilities and pre-built schemas for common use cases, including marketing copy, documentation, and content validation.
+### FKit → FieldTest Migration
 
-### @fieldtest/registry
-
-Schema registry for managing and organizing validation schemas across projects.
-
-### @fieldtest/validation-lib
-
-A comprehensive TypeScript validation library that works with both Astro and Next.js, built on top of Zod and integrated with @docs-score/core.
-
-### @fieldtest/integrations
-
-Tool integrations including:
-
-- **MCP Server**: Model Context Protocol server for AI-powered content workflows
-- **Obsidian**: Integration tools for Obsidian note management
-
-## 🚀 FKit → FieldTest Migration
-
-**All FKit code is now under FieldTest. Use `@fieldtest/*` for all validation and schema work.**
+All FKit code is now under FieldTest. Use `@watthem/fieldtest` for all validation and schema work.
 
 This project successfully consolidates the functionality from the FKit (Flat File Knowledge Infrastructure Toolkit) project, providing a unified and more maintainable codebase under the FieldTest brand.
 
@@ -119,7 +105,7 @@ If you have existing FKit code:
 
 ```bash
 # Update imports in your codebase
-find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\//@fieldtest\//g'
+find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/[a-zA-Z-]*/@watthem\/fieldtest/g'
 find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
 ```
 
