@@ -14,9 +14,10 @@
 		"watch": "tsc --watch",
 		"inspector": "npx @modelcontextprotocol/inspector build/index.js"
 	},
-	"dependencies": {
-		"@modelcontextprotocol/sdk": "1.11.4"
-	},
+        "dependencies": {
+                "@modelcontextprotocol/sdk": "1.11.4",
+                "@fieldtest/shared": "file:../../../shared"
+        },
 	"devDependencies": {
 		"@types/node": "^20.11.24",
 		"typescript": "^5.3.3"

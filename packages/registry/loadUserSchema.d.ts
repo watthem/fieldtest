@@ -11,10 +11,14 @@ export interface FieldTestConfig {
 	 * Default schema to use when not specified
 	 */
 	defaultSchema?: string;
-	/**
-	 * Custom configuration options
-	 */
-	options?: Record<string, unknown>;
+        /**
+         * Custom configuration options
+         */
+        options?: Record<string, unknown>;
+        /**
+         * Glob patterns for files or directories to exclude
+         */
+        exclude?: string[];
 }
 /**
  * Load user-defined schemas from configuration file

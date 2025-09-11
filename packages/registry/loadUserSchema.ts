@@ -11,18 +11,22 @@ const DEFAULT_CONFIG_FILE = "fieldtest.config.ts";
  * Interface for fieldtest user configuration
  */
 export interface FieldTestConfig {
-	/**
-	 * Custom schema definitions or paths to schema files
-	 */
-	schemas?: Record<string, string | StandardSchemaV1>;
-	/**
-	 * Default schema to use when not specified
-	 */
-	defaultSchema?: string;
-	/**
-	 * Custom configuration options
-	 */
-	options?: Record<string, unknown>;
+        /**
+         * Custom schema definitions or paths to schema files
+         */
+        schemas?: Record<string, string | StandardSchemaV1>;
+        /**
+         * Default schema to use when not specified
+         */
+        defaultSchema?: string;
+        /**
+         * Custom configuration options
+         */
+        options?: Record<string, unknown>;
+        /**
+         * Glob patterns for files or directories to exclude
+         */
+        exclude?: string[];
 }
 
 /**
