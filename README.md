@@ -82,6 +82,8 @@ npx turbo build
 pnpm test
 ```
 
+For a step-by-step Standard Schema walkthrough, see [docs/getting-started.md](./docs/getting-started.md).
+
 ## Package
 
 `@watthem/fieldtest` bundles the core validation engine, schema registry, and framework integrations into a single, cohesive package:

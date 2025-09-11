@@ -53,6 +53,8 @@ fieldtest/
 ```typescript
 import { validateWithSchema, marketingCopySchema } from '@watthem/fieldtest';
 ```
+See [docs/getting-started.md](./docs/getting-started.md) for a guided Standard Schema example.
+
 
 ### For Markdown Processing
 
