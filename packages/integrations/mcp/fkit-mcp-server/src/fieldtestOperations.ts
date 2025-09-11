@@ -1,10 +1,11 @@
 import path from "path";
 import {
-	FieldTestDocument,
-	parseMarkdown,
-	serializeMarkdown,
+        FieldTestDocument,
+        parseMarkdown,
+        serializeMarkdown,
 } from "@fieldtest/core"; // Assuming FieldTestDocument is a relevant type
 import fs from "fs/promises";
+import { shouldExcludeFile } from "@fieldtest/shared";
 
 // This structure reflects the user's info: schema['~standard'].validate
 // The DEFAULT_FIELDTEST_SCHEMA provides a default validator if no specific schema is loaded.
@@ -57,24 +58,27 @@ const DEFAULT_FIELDTEST_SCHEMA = {
 	},
 };
 
-export async function scanFiles(directory: string): Promise<string[]> {
-	const allFiles: string[] = [];
-	try {
-		const entries = await fs.readdir(directory, { withFileTypes: true });
-		for (const entry of entries) {
-			const fullPath = path.join(directory, entry.name);
-			if (entry.isDirectory()) {
-				if (entry.name.toLowerCase() === "archive") continue; // Skip archive directory
-				allFiles.push(...(await scanFiles(fullPath)));
-			} else if (entry.isFile() && entry.name.endsWith(".md")) {
-				allFiles.push(fullPath);
-			}
-		}
-	} catch (error) {
-		// Log error or handle appropriately if directory is not accessible
-		console.warn(`Could not scan directory ${directory}:`, error);
-	}
-	return allFiles;
+export async function scanFiles(
+        directory: string,
+        excludePatterns: string[] = [],
+): Promise<string[]> {
+        const allFiles: string[] = [];
+        try {
+                const entries = await fs.readdir(directory, { withFileTypes: true });
+                for (const entry of entries) {
+                        const fullPath = path.join(directory, entry.name);
+                        if (shouldExcludeFile(fullPath, excludePatterns)) continue;
+                        if (entry.isDirectory()) {
+                                allFiles.push(...(await scanFiles(fullPath, excludePatterns)));
+                        } else if (entry.isFile() && entry.name.endsWith(".md")) {
+                                allFiles.push(fullPath);
+                        }
+                }
+        } catch (error) {
+                // Log error or handle appropriately if directory is not accessible
+                console.warn(`Could not scan directory ${directory}:`, error);
+        }
+        return allFiles;
 }
 
 export async function readFrontmatter(filePath: string): Promise<any> {

@@ -85,9 +85,12 @@ fieldtest validate \
 export default {
   contentGlob: "content/**/*.md",
   schemaGlob: "schemas/**/*.ts",
+  exclude: ["archive/**"],
   validateLLMS: true
 }
 ```
+
+`exclude` accepts glob patterns for files or directories that FieldTest should ignore when scanning.
 
 ---
 
