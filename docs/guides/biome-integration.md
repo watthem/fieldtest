@@ -601,7 +601,6 @@ If you create custom plugins, document what they check and why.
 
 - 🌐 [Biome Official Documentation](https://biomejs.dev)
 - 📖 [GritQL Syntax](https://docs.grit.io/)
-- 🔧 [FieldTest Migration Guide](../../MIGRATION.md)
 - 💡 [Plugin Examples](../../grit-plugins/)
 
 ---

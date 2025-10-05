@@ -426,6 +426,5 @@ Ready to try FieldTest?
 ## Learn More
 
 - 💭 [What is Standard Schema?](./standard-schema.md)
-- 🔄 [Migration Guide](../../MIGRATION.md)
 - 🌐 [Standard Schema Specification](https://standardschema.dev)
 - 📚 [Getting Started](../getting-started.md)

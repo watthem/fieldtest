@@ -32,7 +32,6 @@ Conceptual articles to deepen your understanding:
 
 ## 🚀 Quick Links
 
-- [Migration Guide](../MIGRATION.md) — Upgrading from legacy `@fieldtest/*` packages
 - [Examples](../packages/examples/) — Real-world use cases
 - [Biome Plugins](../grit-plugins/README.md) — Custom linting rules
 - [Changelog](../CHANGELOG.md) — Version history and changes
@@ -73,9 +72,6 @@ docs/
 
 **Understand Standard Schema**
 → [Standard Schema Explainer](./explainers/standard-schema.md)
-
-**Migrate from legacy packages**
-→ [Migration Guide](../MIGRATION.md)
 
 **Look up API details**
 → [API Reference](./reference/api.md)
