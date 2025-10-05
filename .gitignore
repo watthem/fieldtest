@@ -6,6 +6,9 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+.turbo/
+.next/
+out/
 
 # Environment files
 .env
@@ -59,3 +62,10 @@ legacy/
 # Temporary folders
 tmp/
 temp/
+
+# VitePress
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# Repomix
+artifacts/
