@@ -21,6 +21,17 @@
 		"validate": "./dist/cli.js"
 	},
 	"files": ["dist/**"],
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
+	"license": "MIT",
+	"homepage": "https://github.com/watthem/fieldtest",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/watthem/fieldtest.git",
+		"directory": "packages/validation-lib"
+	},
+	"bugs": {
+		"url": "https://github.com/watthem/fieldtest/issues"
+	},
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",

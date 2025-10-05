@@ -29,8 +29,17 @@
 		"run-examples": "ts-node run-examples.ts"
 	},
 	"keywords": ["fieldtest", "markdown", "schema", "registry", "obsidian", "bases"],
-	"author": "",
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
 	"license": "MIT",
+	"homepage": "https://github.com/watthem/fieldtest",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/watthem/fieldtest.git",
+		"directory": "packages/registry"
+	},
+	"bugs": {
+		"url": "https://github.com/watthem/fieldtest/issues"
+	},
 	"devDependencies": {
 		"@types/node": "^18.19.101",
 		"eslint": "^8.49.0",

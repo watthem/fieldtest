@@ -13,6 +13,17 @@
 		}
 	},
 	"files": ["dist/**"],
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
+	"license": "MIT",
+	"homepage": "https://github.com/watthem/fieldtest",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/watthem/fieldtest.git",
+		"directory": "packages/shared"
+	},
+	"bugs": {
+		"url": "https://github.com/watthem/fieldtest/issues"
+	},
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",
