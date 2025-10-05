@@ -15,7 +15,7 @@ It is designed for modern frameworks like **Astro** and **Next.js**, with suppor
 - ✅ Make content types auditable and testable like code
 - ✅ Support LLM-readable content definitions (e.g. `llms.txt`)
 - ✅ Enable safe collaboration between developers and content teams
-- 🆕 Provide automated migration tooling from legacy FKit packages
+- 🆕 Provide automated migration tooling from legacy packages
 - 🆕 Enforce best practices through custom Biome linting plugins
 
 ---
@@ -35,9 +35,9 @@ It is designed for modern frameworks like **Astro** and **Next.js**, with suppor
 
 - [x] CLI tool: `fieldtest validate`
 - [x] GitHub Action for schema enforcement
-- [ ] Biome integration with custom GritQL plugins
-  - [ ] Migration helper plugin (FKit → FieldTest)
-  - [ ] Schema usage validation plugin
+- [x] Biome integration with custom GritQL plugins
+  - [x] Migration helper plugin for legacy imports
+  - [x] Schema usage validation plugin
   - [ ] Standard Schema naming conventions plugin
 - [ ] VS Code Extension (inline decorators, type hints)
 - [ ] Web dashboard `/validate` (in Astro or Next)
@@ -77,7 +77,7 @@ It is designed for modern frameworks like **Astro** and **Next.js**, with suppor
 - Frontend developers using Markdown or CMS data
 - DevOps or platform engineers managing CI
 - Technical content teams looking to avoid accidental structure drift
-- Developers migrating from legacy FKit packages
+- Developers building content-rich applications
 - Open-source contributors building custom validation workflows
 
 ---
@@ -90,14 +90,14 @@ Biome provides a unified linter and formatter that can be extended through GritQ
 
 1. **Modernize the toolchain** by replacing ESLint/Prettier with a single, faster tool
 2. **Help users adopt best practices** through custom diagnostic rules
-3. **Automate migration detection** from legacy FKit packages
+3. **Automate migration detection** from legacy package structures
 4. **Enforce schema validation patterns** to prevent common mistakes
 
 ### Planned GritQL Plugins
 
 #### 1. Migration Helper Plugin
 
-Detects legacy `@fieldtest/*` imports and `FkitDocument` type usage, emitting warnings that guide developers to the unified `@watthem/fieldtest` package.
+Detects legacy `@fieldtest/*` imports and outdated type names, emitting warnings that guide developers to the unified `@watthem/fieldtest` package.
 
 #### 2. Schema Usage Validation Plugin
 
@@ -130,7 +130,7 @@ Following the [Diátaxis framework](https://diataxis.fr/), FieldTest documentati
 
 - Validate content with Standard Schema
 - Integrate FieldTest in modern frameworks
-- Migrate from FKit to FieldTest
+- Migrate from legacy packages
 - Use Biome plugins for validation
 
 ### 3. Reference (Information-oriented)
@@ -143,7 +143,7 @@ Following the [Diátaxis framework](https://diataxis.fr/), FieldTest documentati
 
 - What is Standard Schema?
 - Why FieldTest?
-- Transition from FKit to FieldTest
+- Content validation best practices
 - How Biome plugins enhance DX
 
 ---

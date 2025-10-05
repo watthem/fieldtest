@@ -4,16 +4,20 @@
 	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"require": "./dist/index.js",
-			"import": "./dist/index.mjs",
-			"types": "./dist/index.d.ts"
+			"import": "./dist/index.mjs"
 		}
 	},
 	"sideEffects": false,
-	"files": ["dist/**", "README.md", "CHANGELOG.md"],
+	"files": [
+		"dist/**/*.js",
+		"dist/**/*.mjs",
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",

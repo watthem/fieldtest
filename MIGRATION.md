@@ -1,41 +1,42 @@
-# FKit / @fieldtest/* → @watthem/fieldtest Migration Guide
+# Migrating to @watthem/fieldtest
 
 ## Overview
 
-**All FKit and `@fieldtest/*` modules have been consolidated into a single package: `@watthem/fieldtest`.**
+**FieldTest has consolidated all functionality into a single, unified package: `@watthem/fieldtest`.**
 
-This migration unifies the former FKit and FieldTest packages into one toolkit for TypeScript validation, schema management, and content processing. All exports are now available from `@watthem/fieldtest`.
+If you're using legacy `@fieldtest/*` scoped packages, this guide will help you migrate to the modern, unified package with improved performance and developer experience.
 
 ## 🚀 What Changed
 
-### Package Name Changes
+### Package Consolidation
 
-| Old (FKit or FieldTest) | New (@watthem/fieldtest) | Description |
-|-------------------------|--------------------------|-------------|
-| `@fieldtest/core`       | `@watthem/fieldtest`     | Core SDK functionality |
-| `@fieldtest/validate`   | `@watthem/fieldtest`     | Validation utilities |
-| `@fieldtest/registry`   | `@watthem/fieldtest`     | Schema registry |
+| Legacy Package | New Package | What It Included |
+|----------------|-------------|------------------|
+| `@fieldtest/core` | `@watthem/fieldtest` | Markdown parsing, core utilities |
+| `@fieldtest/validate` | `@watthem/fieldtest` | Validation functions |
+| `@fieldtest/registry` | `@watthem/fieldtest` | Schema management |
 
 ### Import Statement Updates
 
-**Before (FKit or `@fieldtest/*`):**
+**Before (multiple packages):**
 
 ```typescript
-import { parseMarkdown, FkitDocument } from '@fieldtest/core';
+import { parseMarkdown } from '@fieldtest/core';
 import { validateWithSchema } from '@fieldtest/validate';
 import { loadSchema } from '@fieldtest/registry';
 ```
 
-**After (`@watthem/fieldtest`):**
+**After (unified package):**
 
 ```typescript
-import { parseMarkdown, FieldTestDocument, validateWithSchema, loadSchema } from '@watthem/fieldtest';
+import { parseMarkdown, validateWithSchema, loadSchema } from '@watthem/fieldtest';
 ```
 
-### Type Name Changes
+### Type Updates
 
-- `FkitDocument` → `FieldTestDocument`
-- All other types remain the same
+- **Document type:** Now consistently named `FieldTestDocument`
+- All validation types remain the same
+- Enhanced TypeScript support with better inference
 
 ## 📦 New Unified Structure
 
@@ -53,8 +54,8 @@ fieldtest/
 ```typescript
 import { validateWithSchema, marketingCopySchema } from '@watthem/fieldtest';
 ```
-See [docs/getting-started.md](./docs/getting-started.md) for a guided Standard Schema example.
 
+See [docs/getting-started.md](./docs/getting-started.md) for a guided Standard Schema example.
 
 ### For Markdown Processing
 
@@ -93,57 +94,109 @@ import { validateNextContent } from '@watthem/fieldtest';
 
 ## ⚠️ Breaking Changes
 
-1. **Package Names:** All FKit and `@fieldtest/*` imports must be updated to `@watthem/fieldtest`
-2. **Type Names:** `FkitDocument` → `FieldTestDocument`
-3. **Import Paths:** Some internal import paths have been reorganized
+1. **Package imports:** All `@fieldtest/*` imports must use `@watthem/fieldtest`
+2. **Document type:** Use `FieldTestDocument` for all document types
+3. **Import paths:** No more nested package imports
 
-## 🚨 Action Required
+## 🚨 Migration Steps
 
-**If you have existing code using FKit or `@fieldtest/*`:**
+### Step 1: Update Dependencies
 
-1. **Update package.json dependencies:**
+```bash
+# Uninstall legacy packages
+npm uninstall @fieldtest/core @fieldtest/validate @fieldtest/registry
 
-   ```diff
-   - "@fieldtest/core": "^0.1.0"
-   - "@fieldtest/validate": "^0.1.0"
-   - "@fieldtest/registry": "^0.1.0"
-   + "@watthem/fieldtest": "workspace:^"
-   ```
+# Install unified package
+npm install @watthem/fieldtest
+```
 
-2. **Update import statements:**
+### Step 2: Update Imports
 
-   ```bash
-   # Find and replace across your codebase
-   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/core/@watthem\/fieldtest/g'
-   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/validate/@watthem\/fieldtest/g'
-   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/registry/@watthem\/fieldtest/g'
-   find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
-   ```
+**Automated replacement (Linux/Mac):**
 
-3. **Reinstall dependencies:**
+```bash
+# Update all @fieldtest/* imports
+find . -name "*.ts" -o -name "*.tsx" -o -name "*.js" | \
+  xargs sed -i 's/@fieldtest\/[a-z-]*/@watthem\/fieldtest/g'
 
-   ```bash
-   pnpm install
-   ```
+# Update document type name
+find . -name "*.ts" -o -name "*.tsx" -o -name "*.js" | \
+  xargs sed -i 's/\bFkitDocument\b/FieldTestDocument/g'
+```
 
-## ✅ Benefits of Consolidation
+**Automated replacement (Windows PowerShell):**
 
-- **Single Source of Truth:** All validation tools in one place
-- **Reduced Complexity:** No more confusion between FKit vs multiple FieldTest packages
-- **Better DX:** Consistent naming and patterns
-- **Easier Maintenance:** Single codebase to maintain
-- **Improved Performance:** Shared dependencies and optimizations
+```powershell
+# Update imports
+Get-ChildItem -Recurse -Include *.ts,*.tsx,*.js | ForEach-Object {
+  (Get-Content $_) -replace '@fieldtest/[a-z-]*', '@watthem/fieldtest' | Set-Content $_
+  (Get-Content $_) -replace '\bFkitDocument\b', 'FieldTestDocument' | Set-Content $_
+}
+```
+
+### Step 3: Test Your Code
+
+```bash
+# Reinstall dependencies
+npm install
+
+# Run tests
+npm test
+
+# Build
+npm run build
+```
+
+## ✅ Benefits of the Unified Package
+
+- 🎯 **Single import source:** One package for all validation needs
+- 📦 **Smaller bundle size:** Eliminated duplicate dependencies
+- ⚡ **Better performance:** Optimized build and runtime
+- 🔧 **Easier upgrades:** Single version to manage
+- 📚 **Clearer documentation:** One API to learn
+- 🛠️ **Better tooling:** Improved TypeScript inference and IDE support
+
+## 🆘 Troubleshooting
+
+### "Cannot find module '@fieldtest/core'"
+
+**Solution:** Remove legacy packages and install `@watthem/fieldtest`:
+
+```bash
+npm uninstall @fieldtest/core @fieldtest/validate @fieldtest/registry
+npm install @watthem/fieldtest
+```
+
+### Type errors with "FieldTestDocument"
+
+**Solution:** Update your type imports:
+
+```typescript
+// Before
+import type { FkitDocument } from '@fieldtest/core';
+
+// After
+import type { FieldTestDocument } from '@watthem/fieldtest';
+```
+
+### Validation still using old API
+
+**Solution:** Use the new unified API:
+
+```typescript
+import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+
+const schema = loadUserSchema(mySchema);
+const result = validateWithSchema(content, schema);
+```
 
 ## 🎉 What's Next
 
-- **Use `@watthem/fieldtest` for ALL new validation work**
-- **Migrate existing `@fieldtest/*` imports to `@watthem/fieldtest`**
-- **Reference this guide when onboarding new team members**
-- **Update documentation and examples to use `@watthem/fieldtest` patterns**
+- ✅ Use `@watthem/fieldtest` for all validation work
+- 📖 Check out the [Getting Started guide](./docs/getting-started.md)
+- 🎯 Explore [framework integrations](./docs/guides/framework-integration.md)
+- 💡 Browse [examples](./packages/examples/)
 
 ---
 
-**Remember: All FKit and `@fieldtest/*` functionality now ships in `@watthem/fieldtest`. There's no reason to go back to the old packages.**
-
-*Migration completed: January 2025*
-
+**The unified `@watthem/fieldtest` package provides everything you need for content validation in one clean, performant package.**

@@ -6,12 +6,12 @@ Custom GritQL plugins for the Biome linter to help with FieldTest migration and 
 
 ### 1. `fieldtest-migration.grit`
 
-Detects legacy `@fieldtest/*` imports and `FkitDocument` type usage.
+Detects legacy `@fieldtest/*` imports and outdated type names.
 
 **What it catches:**
 
 - Legacy import statements: `import { ... } from '@fieldtest/core'`
-- Old type names: `FkitDocument`
+- Outdated type names from previous package versions
 - Legacy exports: `export * from '@fieldtest/validate'`
 - Require statements: `require('@fieldtest/registry')`
 
@@ -22,8 +22,8 @@ import { parseMarkdown } from '@fieldtest/core';
 // ⚠️ Legacy @fieldtest/* packages have been consolidated.
 //    Use '@watthem/fieldtest' instead. See MIGRATION.md for details.
 
-const doc: FkitDocument = parseMarkdown(content);
-// ❌ Replace 'FkitDocument' with 'FieldTestDocument'
+const doc: OldDocumentType = parseMarkdown(content);
+// ❌ Update to use 'FieldTestDocument'
 ```
 
 ### 2. `schema-usage.grit`
@@ -107,9 +107,9 @@ src/lib/parser.ts
       │        ^^^^^^^^^^^^^^^^^
     
 src/types.ts
-  error: Replace 'FkitDocument' with 'FieldTestDocument'
-    5 │ export type Document = FkitDocument;
-      │                        ^^^^^^^^^^^^
+  error: Update to use 'FieldTestDocument'
+    5 │ export type Document = OldDocumentType;
+      │                        ^^^^^^^^^^^^^^^
 ```
 
 ### Schema Usage Example
@@ -205,7 +205,7 @@ Biome diagnostics have different severity levels:
 
 | Severity | Description | Example |
 |----------|-------------|---------|
-| `error` | Must be fixed | `FkitDocument` usage |
+| `error` | Must be fixed | Outdated type names |
 | `warn` | Should be fixed | Legacy imports |
 | `info` | Informational | Non-standard naming |
 | `hint` | Suggestion | Code improvements |

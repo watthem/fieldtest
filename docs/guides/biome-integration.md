@@ -75,7 +75,7 @@ pnpm biome check --write .
 
 ### Migration Helper Plugin
 
-Detects legacy `@fieldtest/*` imports and `FkitDocument` usage.
+Detects legacy `@fieldtest/*` imports and outdated type names.
 
 **What it catches:**
 
@@ -83,8 +83,8 @@ Detects legacy `@fieldtest/*` imports and `FkitDocument` usage.
 // ⚠️ Warning: Legacy import
 import { parseMarkdown } from '@fieldtest/core';
 
-// ❌ Error: Old type name
-const doc: FkitDocument = parseMarkdown(content);
+// ❌ Error: Outdated type name
+const doc: OldDocumentType = parseMarkdown(content);
 ```
 
 **Suggested fixes:**
