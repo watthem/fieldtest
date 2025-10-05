@@ -10,6 +10,17 @@
   "files": [
     "build"
   ],
+  "author": "Matthew Hendricks <hello@matthewhendricks.net>",
+  "license": "MIT",
+  "homepage": "https://github.com/watthem/fieldtest",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/watthem/fieldtest.git",
+    "directory": "packages/integrations/mcp/fieldtest-mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/watthem/fieldtest/issues"
+  },
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build",
