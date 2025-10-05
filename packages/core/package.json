@@ -1,6 +1,6 @@
 {
 	"name": "@watthem/fieldtest",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -42,7 +42,7 @@
 	"homepage": "https://docs.matthewhendricks.net",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/watthem/fieldtest.git"
+		"url": "git+https://github.com/watthem/fieldtest.git"
 	},
 	"bugs": {
 		"url": "https://github.com/watthem/fieldtest/issues"
