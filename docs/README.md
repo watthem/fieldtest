@@ -29,11 +29,10 @@ Conceptual articles to deepen your understanding:
 
 - **[What is Standard Schema?](./explainers/standard-schema.md)** — Learn about Standard Schema and why it matters
 - **[Why FieldTest?](./explainers/why-fieldtest.md)** — The problems FieldTest solves and when to use it
-- **[FKit → FieldTest Transition](./explainers/fkit-transition.md)** — Understanding the consolidation
 
 ## 🚀 Quick Links
 
-- [Migration Guide](../MIGRATION.md) — Migrating from FKit or `@fieldtest/*` packages
+- [Migration Guide](../MIGRATION.md) — Upgrading from legacy `@fieldtest/*` packages
 - [Examples](../packages/examples/) — Real-world use cases
 - [Biome Plugins](../grit-plugins/README.md) — Custom linting rules
 - [Changelog](../CHANGELOG.md) — Version history and changes
@@ -53,8 +52,7 @@ docs/
 │   └── api.md
 └── explainers/                  # Conceptual articles
     ├── standard-schema.md
-    ├── why-fieldtest.md
-    └── fkit-transition.md
+    └── why-fieldtest.md
 ```
 
 ## 🎯 Find What You Need
@@ -76,8 +74,8 @@ docs/
 **Understand Standard Schema**
 → [Standard Schema Explainer](./explainers/standard-schema.md)
 
-**Migrate from FKit**
-→ [FKit Transition Guide](./explainers/fkit-transition.md)
+**Migrate from legacy packages**
+→ [Migration Guide](../MIGRATION.md)
 
 **Look up API details**
 → [API Reference](./reference/api.md)
@@ -87,7 +85,7 @@ docs/
 
 ## 🔧 Tools & Integrations
 
-- **[MCP Server](../packages/integrations/mcp/fkit-mcp-server/)** — AI-powered content validation
+- **[MCP Server](../packages/integrations/mcp/fieldtest-mcp-server/)** — AI-powered content validation
 - **[Biome Plugins](../grit-plugins/)** — Custom linting rules for migration and best practices
 
 ## 🌟 Features
@@ -150,7 +148,7 @@ if (!result.valid) {
 
 Want to contribute? Check out:
 
-- [Contributing Guidelines](../CONTRIBUTING.md) *(coming soon)*
+- [Contributing Guidelines](../CONTRIBUTING.md)
 - [Development Setup](../README.md#contributing)
 - [Open Issues](https://github.com/watthem/fieldtest/issues)
 
