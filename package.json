@@ -5,7 +5,7 @@
   "description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
   "keywords": [
     "validation",
-    "typescript", 
+    "typescript",
     "schema",
     "data-pipeline",
     "api-testing",
@@ -35,14 +35,18 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "biome:check": "biome check .",
+    "biome:lint": "biome lint .",
+    "biome:format": "biome format --write .",
+    "biome:fix": "biome check --write ."
   },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "dependencies": {},
   "devDependencies": {
+    "@biomejs/biome": "2.2.5",
     "turbo": "^2.1.0",
     "typescript": "^5.3.0"
   }

@@ -1,132 +1,254 @@
-# FieldTest Validation Toolkit
+# FieldTest
 
-A comprehensive TypeScript validation toolkit for content management and schema validation across modern frameworks. FieldTest provides powerful markdown processing, schema validation, and content organization tools in a unified, framework-agnostic package.
+> A validation toolkit for Markdown and Standard Schema — built for Astro, Next.js, and modern frameworks.
 
-## Overview
-
-FieldTest is a **validation toolkit** (not an SDK) that consolidates content validation, markdown processing, and schema management into cohesive, reusable packages. It integrates seamlessly with Astro, Next.js, and other modern frameworks while leveraging @docs-score/core functionality and modern development practices.
+[![npm version](https://img.shields.io/npm/v/@watthem/fieldtest.svg)](https://www.npmjs.com/package/@watthem/fieldtest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## What is FieldTest?
 
-FieldTest is a **validation toolkit** - a collection of specialized tools that work together for:
+**FieldTest** is a TypeScript validation toolkit that unifies:
 
-- **Content Validation**: Validate markdown content against custom schemas
-- **Schema Management**: Organize and manage validation schemas across projects  
-- **Markdown Processing**: Parse, process, and serialize markdown with frontmatter
-- **Framework Integration**: Works with Astro, Next.js, and other modern frameworks
-- **Standard Schema Support**: Built on [Standard Schema](https://standardschema.dev) for maximum compatibility
+- 📝 **Markdown parsing** with frontmatter support
+- ✅ **Schema validation** using [Standard Schema](https://standardschema.dev)
+- 🗂️ **Schema registry** for reusable validation rules
+- 🚀 **Framework integrations** for Astro, Next.js, and more
+- 🤖 **MCP integration** for AI-powered content workflows
+- 🔧 **Biome plugins** for linting and migration assistance
 
-## Structure
+FieldTest helps you catch content structure errors before they reach production, ensuring consistency across markdown files, CMS payloads, and content-rich applications.
 
-The workspace is structured as follows:
+## Project Structure
 
-```md
+```
 fieldtest/
-├── apps/                    # Applications
-│   ├── astro-site/         # Astro.js application
-│   └── next-app/           # Next.js application
-├── packages/               # Shared packages
-│   ├── core/              # Core markdown processing and schema utilities
-│   ├── shared/            # Common utilities and types
-│   ├── validation-lib/    # Framework-agnostic validation library
-│   ├── validate/          # Validation utilities and schemas
-│   ├── registry/          # Schema registry and management
-│   ├── examples/          # Example implementations and use cases
-│   ├── fieldtest-demo/    # Demo package for various frameworks
-│   └── integrations/      # Tool integrations (MCP, Obsidian, etc.)
-├── package.json           # Workspace configuration
-└── turbo.json             # Turborepo configuration
+├── packages/
+│   ├── core/                    # Core markdown processing
+│   ├── validate/                # Validation utilities
+│   ├── registry/                # Schema registry
+│   ├── shared/                  # Common utilities and types
+│   ├── examples/                # Example implementations
+│   └── integrations/
+│       └── mcp/
+│           └── fieldtest-mcp-server/  # MCP server for AI workflows
+├── grit-plugins/                # Biome GritQL linting plugins
+├── docs/                        # Documentation
+│   ├── guides/                  # How-to guides
+│   ├── reference/               # API reference
+│   └── explainers/              # Conceptual articles
+├── scripts/                     # Build and utility scripts
+└── biome.json                   # Biome configuration
 ```
 
-## Key Features
+## Features
 
-- **Unified Toolkit**: Combines markdown processing, schema validation, and content management
-- **Framework Agnostic**: Libraries and utilities that work with Astro, Next.js, and other frameworks
-- **Standard Schema Support**: Built on [Standard Schema](https://standardschema.dev) for maximum compatibility
-- **Monorepo Setup**: Using PNPM workspaces and Turborepo for efficient package management
-- **@docs-score/core Integration**: Leveraging existing functionality from @docs-score/core
-- **Modern Tooling**: Using tsup for bundling, Vitest for testing, and ESLint for linting
-- **TypeScript**: Full TypeScript support with proper type definitions
-- **MCP Integration**: Model Context Protocol server for AI-powered workflows
+✨ **Content Validation** — Validate markdown files against custom schemas with detailed error reporting
 
-## Getting Started
+🎯 **Standard Schema** — Built on [Standard Schema](https://standardschema.dev) for interoperability
 
-### Quick Start
+🏗️ **Framework Integration** — Works seamlessly with Astro, Next.js, and other modern frameworks
+
+📚 **Schema Registry** — Reuse and manage validation schemas across projects
+
+🔄 **Markdown Processing** — Parse and serialize markdown with frontmatter
+
+🤖 **AI Workflows** — Model Context Protocol (MCP) server for AI-powered content validation
+
+🛠️ **Biome Plugins** — Custom GritQL linting rules for migration assistance and best practices
+
+## Installation
 
 ```bash
 npm install @watthem/fieldtest
 ```
 
-### Prerequisites
-
-- Node.js 18+
-- PNPM 8+
-
-### Installation
+Or with pnpm:
 
 ```bash
+pnpm add @watthem/fieldtest
+```
+
+**Requirements:** Node.js 18+ and PNPM 8+
+
+## Quick Start
+
+### 1. Define a schema
+
+```typescript
+import type { StandardSchemaV1 } from '@watthem/fieldtest';
+
+export const blogPostSchema: StandardSchemaV1 = {
+  version: '1',
+  name: 'blog-post',
+  fields: {
+    title: { type: 'string', required: true },
+    published: { type: 'boolean', required: true },
+    tags: { type: 'string', array: true }
+  }
+};
+```
+
+### 2. Validate your content
+
+```typescript
+import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { blogPostSchema } from './schema';
+
+const schema = loadUserSchema(blogPostSchema);
+const markdown = `
+---
+title: "My First Post"
+published: true
+tags: ["typescript", "validation"]
+---
+# Hello World
+`;
+
+const result = validateWithSchema(markdown, schema);
+
+if (result.valid) {
+  console.log('✓ Content is valid!');
+} else {
+  console.error('✗ Validation errors:', result.errors);
+}
+```
+
+📖 **For a complete walkthrough**, see [docs/getting-started.md](./docs/getting-started.md).
+
+## Examples & Guides
+
+### Framework Integration
+
+```typescript
+// Astro
+import { validateAstroContent } from '@watthem/fieldtest';
+
+// Next.js
+import { validateNextContent } from '@watthem/fieldtest';
+```
+
+### Markdown Processing
+
+```typescript
+import { parseMarkdown, serializeMarkdown } from '@watthem/fieldtest';
+
+const doc = parseMarkdown('---\ntitle: Hello\n---\nContent');
+console.log(doc.frontmatter.title); // "Hello"
+
+const markdown = serializeMarkdown(doc);
+```
+
+### Schema Registry
+
+```typescript
+import { getBuiltInSchema } from '@watthem/fieldtest';
+
+const marketingSchema = getBuiltInSchema('marketing-copy');
+```
+
+📚 **More examples**: Check out the [packages/examples](./packages/examples) directory for real-world use cases.
+
+## Biome Integration
+
+FieldTest includes optional **Biome plugins** to help with migration and enforce best practices. These GritQL-based plugins provide diagnostic messages for common issues.
+
+### Available Plugins
+
+1. **Migration Helper** — Detects legacy `@fieldtest/*` imports and `FkitDocument` usage
+2. **Schema Validation** — Ensures validation results are properly checked
+3. **Schema Conventions** — Flags non-standard schema patterns
+
+### Setup
+
+```bash
+# Install Biome
+pnpm add -D @biomejs/biome
+
+# Enable FieldTest plugins in biome.json
+{
+  "plugins": [
+    "./node_modules/@watthem/fieldtest/grit-plugins/fieldtest-migration.grit",
+    "./node_modules/@watthem/fieldtest/grit-plugins/schema-usage.grit"
+  ]
+}
+
+# Run linting
+pnpm biome lint
+```
+
+**Note:** Biome's plugin system currently provides diagnostics only (no auto-fixes). The plugins will highlight issues with helpful messages.
+
+📖 **Learn more** about Biome integration in [docs/guides/biome-integration.md](./docs/guides/biome-integration.md).
+
+## Contributing
+
+We welcome contributions! To get started:
+
+```bash
+# Clone the repository
+git clone https://github.com/watthem/fieldtest.git
+
 # Install dependencies
 pnpm install
-```
 
-### Development
-
-```bash
-# Start development servers for all applications
+# Start development
 pnpm dev
 
-# Build all packages and applications
-npx turbo build
-
-# Run tests across all packages
+# Run tests
 pnpm test
+
+# Lint and format
+pnpm biome:check
+pnpm biome:fix
 ```
 
-For a step-by-step Standard Schema walkthrough, see [docs/getting-started.md](./docs/getting-started.md).
+### Project Structure
 
-## Package
+```
+fieldtest/
+├── packages/
+│   ├── core/              # Core markdown processing
+│   ├── validate/          # Validation utilities
+│   ├── registry/          # Schema registry
+│   ├── examples/          # Example implementations
+│   └── integrations/      # MCP, Obsidian, etc.
+├── grit-plugins/          # Biome GritQL plugins
+└── docs/                  # Documentation
+```
 
-`@watthem/fieldtest` bundles the core validation engine, schema registry, and framework integrations into a single, cohesive package:
+📖 **Guidelines**: See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines.
 
-- Markdown parsing and serialization
-- Validation utilities and pre-built schemas
-- Schema registry and management
-- Integrations like MCP Server and Obsidian tooling
+## Migration from FKit
 
-## History
+All FKit and `@fieldtest/*` packages have been consolidated into `@watthem/fieldtest`.
 
-### FKit → FieldTest Migration
-
-All FKit code is now under FieldTest. Use `@watthem/fieldtest` for all validation and schema work.
-
-This project successfully consolidates the functionality from the FKit (Flat File Knowledge Infrastructure Toolkit) project, providing a unified and more maintainable codebase under the FieldTest brand.
-
-### Quick Migration Guide
-
-If you have existing FKit code:
+**Quick migration:**
 
 ```bash
-# Update imports in your codebase
+# Update imports
 find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/[a-zA-Z-]*/@watthem\/fieldtest/g'
 find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
 ```
 
-📖 **See [MIGRATION.md](./MIGRATION.md) for complete migration details, breaking changes, and examples.**
+📖 **Complete guide**: [MIGRATION.md](./MIGRATION.md)
 
-## Applications
+## Documentation
 
-### Astro Site
+- 📖 [Getting Started](./docs/getting-started.md) — Your first validation
+- 📚 [API Reference](./docs/reference/api.md) — Complete API documentation
+- 🎓 [Guides](./docs/guides/) — Framework integration, Biome setup, and more
+- 💡 [Examples](./packages/examples/) — Real-world use cases
 
-A demo Astro.js site that showcases the validation library in action.
+## Community & Support
 
-### Next.js App
-
-A demo Next.js application that demonstrates how to use the validation library in a React application.
-
-## Acknowledgements
-
-This project is built on the foundations laid by the @docs-score/core library and incorporates functionality from the FKit project. It follows patterns described in the project documentation and emphasizes minimal dependencies for maximum robustness.
+- 🐛 [Report bugs](https://github.com/watthem/fieldtest/issues)
+- 💬 [Discussions](https://github.com/watthem/fieldtest/discussions)
+- 📧 Contact: <hello@matthewhendricks.net>
 
 ## License
 
-MIT
+MIT © [Matthew Hendricks](https://matthewhendricks.net)
+
+## Acknowledgements
+
+Built with modern TypeScript tooling (pnpm, Turborepo, Vitest, Biome) and based on [Standard Schema](https://standardschema.dev) for maximum interoperability.

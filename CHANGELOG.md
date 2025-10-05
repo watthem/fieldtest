@@ -1,60 +1,73 @@
 # Changelog
 
-All notable changes to the FieldTest Validation Toolkit will be documented in this file.
+All notable changes to FieldTest will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2025-07-XX
+## [1.0.0] - 2025-10-05
 
 ### Added
 
-- **Complete migration from FKit to FieldTest** - Consolidated all validation functionality under the FieldTest brand
-- **@fieldtest/core** - Core markdown processing and schema validation utilities
-- **@fieldtest/validate** - Framework-agnostic validation library with pre-built schemas
-- **@fieldtest/registry** - Schema registry for managing validation schemas
-- **@fieldtest/shared** - Common utilities and types
-- **@fieldtest/validation-lib** - Extended validation capabilities for Astro and Next.js
-- **@fieldtest/integrations** - MCP server and Obsidian tool integrations
-- **Standard Schema support** - Built on standardschema.dev for maximum compatibility
-- **Modern build tooling** - Using tsup, vitest, and turborepo for efficient development
-- **Framework demos** - Astro and Next.js example applications
-- **Comprehensive documentation** - Migration guide, usage examples, and API documentation
+#### Core Features
+
+- **`@watthem/fieldtest`** — Unified package for all validation functionality
+- **Standard Schema support** — Built on [Standard Schema](https://standardschema.dev) for maximum compatibility
+- **Markdown processing** — Parse and serialize markdown with frontmatter
+- **Schema registry** — Manage and reuse validation schemas
+- **Framework integrations** — Helpers for Astro, Next.js, Remix, SvelteKit, and Nuxt
+
+#### Developer Experience
+
+- **Biome integration** — Fast linting and formatting with custom GritQL plugins
+  - Migration helper plugin for detecting legacy imports
+  - Schema usage validation plugin
+- **TypeScript-first** — Full TypeScript support with proper type definitions
+- **Monorepo architecture** — Using pnpm workspaces and Turborepo
+
+#### Integrations
+
+- **MCP server** — Model Context Protocol server for AI-powered content validation
+- **Framework examples** — Example implementations for Astro and Next.js
+
+#### Documentation
+
+- **Comprehensive guides** — Getting started, schema validation, framework integration, Biome setup
+- **API reference** — Complete API documentation with examples
+- **Explainer articles** — Standard Schema, Why FieldTest, migration guide
+- **Contributing guide** — Clear contribution guidelines
 
 ### Changed
 
-- **Project identity**: Rebranded from "FKit SDK" to "FieldTest Validation Toolkit"
-- **Package naming**: All packages now use `@fieldtest/*` scope instead of `@fieldtest/*`
-- **Type naming**: `FkitDocument` → `FieldTestDocument`
-- **Improved consistency** - Standardized descriptions and metadata across all packages
+- **Package consolidation** — All functionality unified in `@watthem/fieldtest`
+- **Type naming** — `FkitDocument` → `FieldTestDocument`
+- **Consistent branding** — All references updated to "FieldTest"
 
 ### Migration
 
-- See [MIGRATION.md](./MIGRATION.md) for complete migration instructions from FKit
-- All `@fieldtest/*` imports should be updated to `@fieldtest/*`
-- Update any `FkitDocument` type references to `FieldTestDocument`
+See [MIGRATION.md](./MIGRATION.md) for complete migration instructions.
+
+**Quick migration:**
+
+```bash
+# Update imports
+find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/@fieldtest\/[a-zA-Z-]*/@watthem\/fieldtest/g'
+
+# Update type names
+find . -name "*.ts" -o -name "*.tsx" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
+```
 
 ---
 
-## Pre-FieldTest History (FKit Era)
+## Future
 
-### 2025-05-20
+### Planned Features
 
-- Optimized repomix with file exclusions and cleanup
-- Updated commit scripts with improved message extraction
-- Added MCP server functionality for AI-powered workflows
-- Implemented core logic for content scanning with MCP tools
+- VS Code extension with inline validation
+- Additional built-in schemas
+- Auto-fix support for Biome plugins (when available)
+- FieldTest Cloud for hosted validation
 
-### 2025-05-19
+---
 
-- Added comprehensive documentation for FKit and FieldTest usage
-- Refactored schema validation and added usage examples
-- Improved README and core package documentation
-
-### 2025-05-18
-
-- Initial FKit SDK architecture and core packages
-- Established project structure and onboarding documentation
-- Created foundational validation and registry packages
-
-[0.1.0]: https://github.com/yourorg/fieldtest/releases/tag/v0.1.0
+[1.0.0]: https://github.com/watthem/fieldtest/releases/tag/v1.0.0

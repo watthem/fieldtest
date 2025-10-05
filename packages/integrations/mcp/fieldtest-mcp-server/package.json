@@ -1,0 +1,27 @@
+{
+  "name": "@watthem/fieldtest-mcp-server",
+  "version": "0.1.0",
+  "description": "FieldTest MCP server for content validation and organization using flat-file indices and Standard Schema.",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "fieldtest-mcp-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.11.4",
+    "@watthem/fieldtest": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}

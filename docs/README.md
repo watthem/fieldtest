@@ -1,34 +1,163 @@
-# FieldTest Landing Page
+# FieldTest Documentation
 
-This directory contains the landing page for FieldTest hosted at [fieldtest.watthem.blog](https://fieldtest.watthem.blog).
+Welcome to FieldTest! This documentation will help you get started with content validation using Standard Schema.
 
-## GitHub Pages Setup
+## 📖 Getting Started
 
-1. Go to the watthem/fieldtest repository settings
-2. Navigate to "Pages" in the left sidebar
-3. Set source to "Deploy from a branch"
-4. Choose "main" branch and "/docs" folder
-5. The CNAME file will automatically configure the custom domain
+New to FieldTest? Start here:
 
-## DNS Configuration
+- **[Getting Started Guide](./getting-started.md)** — Install FieldTest and validate your first markdown file
+- **[Why FieldTest?](./explainers/why-fieldtest.md)** — Understand the problems FieldTest solves
 
-Add a CNAME record for your domain:
+## 🎓 Guides (How-to)
+
+Step-by-step instructions for common tasks:
+
+- **[Schema Validation Guide](./guides/schema-validation.md)** — Create schemas and validate content
+- **[Framework Integration](./guides/framework-integration.md)** — Use FieldTest with Astro, Next.js, and other frameworks
+- **[Biome Integration](./guides/biome-integration.md)** — Set up Biome linting with FieldTest plugins
+
+## 📚 Reference
+
+Complete API documentation:
+
+- **[API Reference](./reference/api.md)** — All functions, types, and utilities
+
+## 💡 Explainers (Understanding)
+
+Conceptual articles to deepen your understanding:
+
+- **[What is Standard Schema?](./explainers/standard-schema.md)** — Learn about Standard Schema and why it matters
+- **[Why FieldTest?](./explainers/why-fieldtest.md)** — The problems FieldTest solves and when to use it
+- **[FKit → FieldTest Transition](./explainers/fkit-transition.md)** — Understanding the consolidation
+
+## 🚀 Quick Links
+
+- [Migration Guide](../MIGRATION.md) — Migrating from FKit or `@fieldtest/*` packages
+- [Examples](../packages/examples/) — Real-world use cases
+- [Biome Plugins](../grit-plugins/README.md) — Custom linting rules
+- [Changelog](../CHANGELOG.md) — Version history and changes
+
+## 🗂️ Documentation Structure
+
+This documentation follows the [Diátaxis framework](https://diataxis.fr/):
+
 ```
-fieldtest.watthem.blog CNAME watthem.github.io
+docs/
+├── getting-started.md           # Quick start guide
+├── guides/                      # How-to guides
+│   ├── schema-validation.md
+│   ├── framework-integration.md
+│   └── biome-integration.md
+├── reference/                   # API documentation
+│   └── api.md
+└── explainers/                  # Conceptual articles
+    ├── standard-schema.md
+    ├── why-fieldtest.md
+    └── fkit-transition.md
 ```
 
-## Analytics
+## 🎯 Find What You Need
 
-The page includes Plausible analytics configured for `fieldtest.watthem.blog` domain.
+### I want to
 
-## Cross-linking Strategy
+**Get started quickly**
+→ [Getting Started Guide](./getting-started.md)
 
-- Links back to matthewhendricks.net (personal hub)
-- References Westmark.dev products that use FieldTest
-- GitHub links include UTM tracking for attribution
+**Validate markdown content**
+→ [Schema Validation Guide](./guides/schema-validation.md)
 
-## Files
+**Use FieldTest with Astro or Next.js**
+→ [Framework Integration Guide](./guides/framework-integration.md)
 
-- `index.html` - Main landing page following the UX specification
-- `CNAME` - Custom domain configuration for GitHub Pages
-- `README.md` - This documentation file
+**Set up Biome linting**
+→ [Biome Integration Guide](./guides/biome-integration.md)
+
+**Understand Standard Schema**
+→ [Standard Schema Explainer](./explainers/standard-schema.md)
+
+**Migrate from FKit**
+→ [FKit Transition Guide](./explainers/fkit-transition.md)
+
+**Look up API details**
+→ [API Reference](./reference/api.md)
+
+**See example code**
+→ [Examples](../packages/examples/)
+
+## 🔧 Tools & Integrations
+
+- **[MCP Server](../packages/integrations/mcp/fkit-mcp-server/)** — AI-powered content validation
+- **[Biome Plugins](../grit-plugins/)** — Custom linting rules for migration and best practices
+
+## 🌟 Features
+
+FieldTest provides:
+
+- ✅ **Markdown parsing** with frontmatter support
+- ✅ **Schema validation** using Standard Schema
+- ✅ **Schema registry** for reusable validation rules
+- ✅ **Framework integrations** (Astro, Next.js, and more)
+- ✅ **MCP integration** for AI workflows
+- ✅ **Biome plugins** for linting and migration
+
+## 💬 Community & Support
+
+- 🐛 [Report bugs](https://github.com/watthem/fieldtest/issues)
+- 💬 [Discussions](https://github.com/watthem/fieldtest/discussions)
+- 📧 Contact: <hello@matthewhendricks.net>
+
+## 📦 Installation
+
+```bash
+npm install @watthem/fieldtest
+```
+
+Or with pnpm:
+
+```bash
+pnpm add @watthem/fieldtest
+```
+
+**Requirements:** Node.js 18+ and PNPM 8+
+
+## 🚀 Quick Example
+
+```typescript
+import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@watthem/fieldtest';
+
+// Define schema
+const schema: StandardSchemaV1 = {
+  version: '1',
+  name: 'blog-post',
+  fields: {
+    title: { type: 'string', required: true },
+    published: { type: 'boolean', required: true }
+  }
+};
+
+// Validate content
+const loaded = loadUserSchema(schema);
+const result = validateWithSchema(markdown, loaded);
+
+if (!result.valid) {
+  console.error('Validation failed:', result.errors);
+}
+```
+
+## 📖 Contributing
+
+Want to contribute? Check out:
+
+- [Contributing Guidelines](../CONTRIBUTING.md) *(coming soon)*
+- [Development Setup](../README.md#contributing)
+- [Open Issues](https://github.com/watthem/fieldtest/issues)
+
+## 📝 License
+
+MIT © [Matthew Hendricks](https://matthewhendricks.net)
+
+---
+
+**Ready to get started?** → [Getting Started Guide](./getting-started.md)

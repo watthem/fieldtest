@@ -1,0 +1,46 @@
+language js
+
+// Match legacy @fieldtest/* imports and suggest migration to @watthem/fieldtest
+pattern legacy_fieldtest_import() {
+  `import $specifiers from '@fieldtest/$package'` where {
+    register_diagnostic(
+      span = $specifiers,
+      message = "Legacy @fieldtest/* packages have been consolidated. Use '@watthem/fieldtest' instead. See MIGRATION.md for details.",
+      severity = "warn"
+    )
+  }
+}
+
+// Match FkitDocument type usage and suggest FieldTestDocument
+pattern fkit_document_type() {
+  `FkitDocument` where {
+    register_diagnostic(
+      span = `FkitDocument`,
+      message = "Replace 'FkitDocument' with 'FieldTestDocument' - FKit has been merged into FieldTest",
+      severity = "error"
+    )
+  }
+}
+
+// Match old package exports
+pattern legacy_package_export() {
+  or {
+    `export * from '@fieldtest/$package'`,
+    `export { $exports } from '@fieldtest/$package'`
+  } where {
+    register_diagnostic(
+      message = "Update package exports from '@fieldtest/*' to '@watthem/fieldtest'. See MIGRATION.md.",
+      severity = "warn"
+    )
+  }
+}
+
+// Match require statements for legacy packages
+pattern legacy_require() {
+  `require('@fieldtest/$package')` where {
+    register_diagnostic(
+      message = "Legacy require detected. Update to '@watthem/fieldtest'. See MIGRATION.md.",
+      severity = "warn"
+    )
+  }
+}

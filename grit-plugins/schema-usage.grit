@@ -1,0 +1,61 @@
+language js
+
+// Detect validateWithSchema calls that don't check the result
+pattern unchecked_validation() {
+  `const $result = validateWithSchema($doc, $schema)` where {
+    // Look ahead to see if result.valid is checked
+    $result <: not contains `$result.valid`
+  } where {
+    register_diagnostic(
+      span = $result,
+      message = "Validation result should be checked. Use 'if (result.valid)' or handle 'result.errors'.",
+      severity = "warn"
+    )
+  }
+}
+
+// Detect schema definitions missing required fields
+pattern incomplete_schema() {
+  or {
+    // Schema missing version field
+    `const $name = { name: $schemaName, fields: $fields }` where {
+      not $fields <: contains `version`
+    },
+    // Schema missing name field
+    `const $name = { version: $version, fields: $fields }` where {
+      not $fields <: contains `name`
+    }
+  } where {
+    register_diagnostic(
+      message = "Standard Schema must include 'version' and 'name' fields. See StandardSchemaV1 type definition.",
+      severity = "error"
+    )
+  }
+}
+
+// Detect schema fields with non-camelCase names
+pattern non_camel_case_field() {
+  `{ $fieldName: { type: $type } }` where {
+    $fieldName <: r"[A-Z_-]+"
+  } where {
+    register_diagnostic(
+      span = $fieldName,
+      message = "Schema field names should use camelCase according to Standard Schema conventions.",
+      severity = "info"
+    )
+  }
+}
+
+// Detect loadUserSchema calls without error handling
+pattern unhandled_schema_load() {
+  `const $schema = loadUserSchema($schemaObject)` where {
+    // Check if there's no try-catch around it
+    not within `try { $_ } catch { $_ }`
+  } where {
+    register_diagnostic(
+      span = $schema,
+      message = "Consider wrapping loadUserSchema in try-catch to handle potential schema validation errors.",
+      severity = "hint"
+    )
+  }
+}

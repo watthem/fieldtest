@@ -29,22 +29,22 @@
 		"content-validation",
 		"typescript"
 	],
-	"homepage": "https://github.com/westmarkdev/prod/tree/main/fieldtest/packages/validate",
+	"homepage": "https://github.com/watthem/fieldtest/tree/main/packages/validate",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/westmarkdev/prod.git",
-		"directory": "fieldtest/packages/validate"
+		"url": "https://github.com/watthem/fieldtest.git",
+		"directory": "packages/validate"
 	},
 	"bugs": {
-		"url": "https://github.com/westmarkdev/prod/issues"
+		"url": "https://github.com/watthem/fieldtest/issues"
 	},
-	"author": "Matthew Hendricks <matthew@westmark.dev>",
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
 	"license": "MIT",
 	"engines": {
 		"node": ">=18.0.0"
 	},
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com"
+		"access": "public"
 	},
 	"devDependencies": {
 		"@types/node": "^18.17.15",
