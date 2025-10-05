@@ -6,8 +6,8 @@ hero:
   text: "Validation toolkit for content"
   tagline: "Framework-agnostic validation for Markdown and Standard Schema — built for Astro, Next.js, and modern frameworks."
   image:
-    src: /logo.svg
-    alt: FieldTest
+    src: /hero.png
+    alt: FieldTest - Framework-agnostic validation toolkit
   actions:
     - theme: brand
       text: Get Started

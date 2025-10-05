@@ -1,0 +1,21 @@
+# robots.txt for FieldTest Documentation
+# https://docs.matthewhendricks.net
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*.json$
+
+# Sitemap
+Sitemap: https://docs.matthewhendricks.net/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Block common bots (optional - uncomment if needed)
+# User-agent: AhrefsBot
+# Crawl-delay: 5
+
+# User-agent: SemrushBot
+# Crawl-delay: 5
+
