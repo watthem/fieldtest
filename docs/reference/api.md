@@ -200,7 +200,7 @@ const schema = getBuiltInSchema('blog-post');
 const result = validateAstroContent(Astro.content, schema);
 
 if (!result.valid) {
-  throw new Error(`Invalid content: ${result.errors.join(', ')}`);
+  throw new Error('Invalid content: ' + result.errors.join(', '));
 }
 ```
 
@@ -287,12 +287,12 @@ Represents a parsed Markdown document with frontmatter and body.
 
 ```typescript
 interface FieldTestDocument {
-  frontmatter: Record<string, any>;
+  frontmatter: Record<string, unknown>;
   body: string;
   metadata?: {
     path?: string;
     lastModified?: Date;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 ```
@@ -346,7 +346,7 @@ const result = validateWithSchema(content, schema);
 
 if (!result.valid) {
   result.errors.forEach(error => {
-    console.error(`Field "${error.field}": ${error.message}`);
+    console.error('Field "' + error.field + '": ' + error.message);
   });
 }
 ```
@@ -503,7 +503,7 @@ const result = validateWithSchema(content, schema);
 if (!result.valid) {
   // Handle errors
   result.errors.forEach(error => {
-    console.error(`Validation failed for "${error.field}": ${error.message}`);
+    console.error('Validation failed for "' + error.field + '": ' + error.message);
   });
 } else {
   // Content is valid, proceed
