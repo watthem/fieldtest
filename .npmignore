@@ -1,0 +1,73 @@
+# Development and internal documentation
+.claude/
+.dev-docs/
+WARP.md
+PRODUCTION-AUDIT.md
+
+# Internal documentation files
+docs/AGENTS.md
+docs/PRD.md
+docs/BLUEPRINT.md
+docs/WORKFLOW.md
+docs/LOG.md
+docs/CLAUDE.md
+docs/SPEC.md
+.git-cleanup-guide.md
+
+# VitePress cache and build artifacts
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# Build artifacts
+.turbo/
+*.tsbuildinfo
+dist/
+build/
+.next/
+out/
+
+# Development
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+*.test.ts
+*.spec.ts
+__tests__/
+__mocks__/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+*.iml
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Package manager
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.repomixignore
+repomix.config.json
