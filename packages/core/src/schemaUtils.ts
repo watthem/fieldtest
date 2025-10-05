@@ -38,5 +38,5 @@ export async function validateWithSchema<T = unknown>(
 
   if (result.issues) return result;
   // At this point result is a success result and has a typed `value` property.
-  return result.value as T;
+  return (result as StandardSchemaV1.SuccessResult<T>).value;
 }

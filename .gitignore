@@ -69,3 +69,6 @@ docs/.vitepress/dist/
 
 # Repomix
 artifacts/
+
+# Local Netlify folder
+.netlify
