@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'FieldTest',
   description: 'A validation toolkit for Markdown and Standard Schema — built for Astro, Next.js, and modern frameworks.',
-  base: '/fieldtest/',
+  base: '/',
   
   head: [
     ['meta', { name: 'theme-color', content: '#3c82f6' }],
@@ -126,7 +126,9 @@ export default defineConfig({
 
   cleanUrls: true,
   
+  ignoreDeadLinks: true,
+  
   sitemap: {
-    hostname: 'https://fieldtest.watthem.blog'
+    hostname: 'https://docs.matthewhendricks.net'
   }
 })
