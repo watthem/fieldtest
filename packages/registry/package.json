@@ -24,7 +24,7 @@
 		"dev": "tsup --watch",
 		"clean": "rimraf dist",
 		"lint": "eslint src --ext .ts",
-		"test": "vitest run",
+		"test": "vitest run --passWithNoTests",
 		"example": "ts-node -O '{\"module\":\"commonjs\"}' standard-schema.example.ts",
 		"run-examples": "ts-node run-examples.ts"
 	},

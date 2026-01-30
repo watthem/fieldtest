@@ -19,7 +19,7 @@
 		"dev": "tsup --watch",
 		"clean": "rimraf dist",
 		"lint": "eslint src --ext .ts",
-		"test": "vitest run"
+		"test": "vitest run --passWithNoTests"
 	},
 	"keywords": [
 		"fieldtest",

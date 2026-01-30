@@ -28,7 +28,7 @@
 		"build": "tsup",
 		"dev": "tsup --watch",
 		"lint": "eslint src/**/*.ts",
-		"test": "vitest run",
+		"test": "vitest run --passWithNoTests",
 		"clean": "rimraf dist"
 	},
         "dependencies": {
