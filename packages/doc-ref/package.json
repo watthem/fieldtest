@@ -5,6 +5,9 @@
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
+	"bin": {
+		"doc-ref": "./dist/src/cli.js"
+	},
 	"exports": {
 		".": {
 			"require": "./dist/index.js",
