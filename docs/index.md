@@ -36,6 +36,10 @@ features:
     title: Performance First
     details: <50ms validation per document, efficiently handles 5000+ files. Built for large content sites that need speed.
 
+  - icon: 🧩
+    title: OpenAPI Ready
+    details: Generate Zod schemas from OpenAPI specs to validate request and response payloads quickly.
+
   - icon: 🛠️
     title: Developer Friendly
     details: Excellent TypeScript support, comprehensive error messages, and extensive documentation. Get productive quickly.
@@ -48,23 +52,17 @@ features:
 ## Quick Example
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
 
-// Define your schema
-const blogSchema: StandardSchemaV1 = {
-  version: '1',
-  name: 'blog-post',
-  fields: {
-    title: { type: 'string', required: true },
-    author: { type: 'string', required: true },
-    published: { type: 'boolean', required: true },
-    tags: { type: 'string', array: true }
-  }
-};
+// Define your schema using Zod (Standard Schema compliant)
+const blogSchema = z.object({
+  title: z.string(),
+  author: z.string(),
+  published: z.boolean(),
+  tags: z.array(z.string()).optional()
+});
 
-// Validate your content
-const schema = loadUserSchema(blogSchema);
+// Parse your markdown content
 const markdown = `---
 title: "Getting Started with FieldTest"
 author: "Jane Developer"
@@ -77,14 +75,18 @@ tags: ["typescript", "validation", "markdown"]
 This post shows how easy it is to validate content with FieldTest!
 `;
 
-const result = validateWithSchema(markdown, schema);
+const doc = parseMarkdown(markdown);
 
-if (result.valid) {
-  console.log('✓ Content validated successfully!');
-} else {
-  result.errors.forEach(error => {
-    console.error(`❌ ${error.field}: ${error.message}`);
+// Validate the frontmatter against your schema
+const result = await validateWithSchema(blogSchema, doc.frontmatter);
+
+if ('issues' in result) {
+  result.issues.forEach(issue => {
+    console.error(`❌ ${issue.path?.join('.')}: ${issue.message}`);
   });
+} else {
+  console.log('✓ Content validated successfully!');
+  console.log('Title:', result.title);  // Type-safe access
 }
 ```
 
@@ -96,49 +98,55 @@ if (result.valid) {
 ```typescript
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { loadUserSchema } from '@watthem/fieldtest';
+import { z } from '@watthem/fieldtest';
 
+// Astro's built-in Zod works with FieldTest schemas
 const blog = defineCollection({
   type: 'content',
-  schema: (z) => z.object({
+  schema: z.object({
     title: z.string(),
-    author: z.string()
-  }).refine(data => {
-    const result = validateWithSchema(
-      generateMarkdown(data), 
-      loadUserSchema(blogSchema)
-    );
-    return result.valid;
+    author: z.string(),
+    published: z.boolean().default(false),
+    tags: z.array(z.string()).optional()
   })
 });
+
+export const collections = { blog };
 ```
 
 ### Next.js
 ```typescript
-// Validate in generateStaticParams or getStaticProps
-export async function generateStaticParams() {
-  const schema = loadUserSchema(blogSchema);
-  const posts = fs.readdirSync('./content');
-  
-  return posts.map(post => {
-    const content = fs.readFileSync(`./content/${post}`, 'utf-8');
-    const result = validateWithSchema(content, schema);
-    
-    if (!result.valid) {
-      throw new Error(`Invalid post: ${result.errors.map(e => e.message)}`);
-    }
-    
-    return { slug: post.replace('.md', '') };
+// Validate content at build time
+import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
+import fs from 'fs';
+
+const postSchema = z.object({
+  title: z.string(),
+  date: z.string(),
+  author: z.string()
+});
+
+export async function getStaticProps({ params }) {
+  const content = fs.readFileSync(`./content/${params.slug}.md`, 'utf-8');
+  const doc = parseMarkdown(content);
+
+  const data = await validateWithSchema(postSchema, doc.frontmatter, {
+    throwOnError: true  // Fail build on invalid content
   });
+
+  return { props: { post: { ...data, body: doc.body } } };
 }
 ```
 
-### Other Frameworks
+### Universal
 ```typescript
-// Universal validation that works anywhere
-import { validateWithSchema } from '@watthem/fieldtest';
+// Works with any framework or runtime
+import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
 
-const isValid = validateWithSchema(content, schema).valid;
+const schema = z.object({ title: z.string() });
+const doc = parseMarkdown(markdown);
+const result = await validateWithSchema(schema, doc.frontmatter);
+const isValid = !('issues' in result);
 ```
 
 </div>
@@ -156,6 +164,13 @@ Designed to handle large content sites. Validates thousands of documents in seco
 
 ### 🔧 **Developer Experience**
 Comprehensive TypeScript support, clear error messages, extensive documentation, and helpful tooling integrations.
+
+## OpenAPI Support
+
+Use OpenAPI contracts to generate Zod schemas and validate request/response payloads.
+
+- [OpenAPI Integration Guide](/guides/openapi-integration)
+- [OpenAPI Reference](/reference/openapi)
 
 ## Ready to Get Started?
 

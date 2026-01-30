@@ -1,59 +1,177 @@
 # API Reference
 
-> **Note**: Full API documentation is being updated. For now, please refer to the TypeScript definitions in the source code.
-
 ## Core Functions
 
-### validateWithSchema(content, schema)
-
-Validates content against a Standard Schema.
-
-- **Parameters:**
-  - `content: any` - The content to validate
-  - `schema: StandardSchemaV1` - The schema to validate against
-- **Returns:** `ValidationResult`
-
-### parseMarkdown(markdown)
+### parseMarkdown(content)
 
 Parses markdown content with frontmatter extraction.
 
+```typescript
+import { parseMarkdown } from '@watthem/fieldtest';
+
+const doc = parseMarkdown(`---
+title: "Hello World"
+---
+
+Content here.
+`);
+
+console.log(doc.frontmatter); // { title: "Hello World" }
+console.log(doc.body);        // "\nContent here.\n"
+```
+
 - **Parameters:**
-  - `markdown: string` - Raw markdown content
-- **Returns:** `ParsedMarkdown`
+  - `content: string` - Raw markdown string with optional frontmatter
+- **Returns:** `FieldTestDocument`
 
-### serializeMarkdown(document)
+### validateWithSchema(schema, data, options?)
 
-Serializes a document back to markdown format.
+Validates data against a Standard Schema (e.g., Zod schema).
+
+```typescript
+import { validateWithSchema, z } from '@watthem/fieldtest';
+
+const schema = z.object({
+  title: z.string(),
+  count: z.number()
+});
+
+// Returns validated data or failure result
+const result = await validateWithSchema(schema, { title: 'Hi', count: 42 });
+
+if ('issues' in result) {
+  // Validation failed
+  console.error(result.issues);
+} else {
+  // result is the validated data with proper types
+  console.log(result.title);
+}
+
+// Or throw on error
+const data = await validateWithSchema(schema, input, { throwOnError: true });
+```
 
 - **Parameters:**
-  - `document: FieldTestDocument` - The document to serialize
+  - `schema: StandardSchemaV1` - A Standard Schema compliant schema (Zod, Valibot, etc.)
+  - `data: unknown` - The data to validate
+  - `options?: ValidationOptions` - Optional settings
+    - `throwOnError?: boolean` - Throw instead of returning failure result
+- **Returns:** `Promise<T | StandardSchemaV1.FailureResult>`
+
+### serializeMarkdown(frontmatter, body)
+
+Serializes frontmatter and body back into a markdown string.
+
+```typescript
+import { serializeMarkdown } from '@watthem/fieldtest';
+
+const markdown = serializeMarkdown(
+  { title: 'My Post', draft: false },
+  '# Hello\n\nContent here.'
+);
+// Returns:
+// ---
+// title: My Post
+// draft: false
+// ---
+// # Hello
+//
+// Content here.
+```
+
+- **Parameters:**
+  - `frontmatter: Record<string, any>` - The frontmatter object
+  - `body: string` - The markdown body content
 - **Returns:** `string`
 
-## Schema Registry
+## Validation Library
 
-### registerSchema(name, schema)
+FieldTest re-exports Zod and provides additional validation helpers.
 
-Registers a custom schema in the global registry.
+### z (Zod)
+
+The Zod library is re-exported for convenience:
+
+```typescript
+import { z } from '@watthem/fieldtest';
+
+const schema = z.object({
+  title: z.string().min(1),
+  tags: z.array(z.string()).optional()
+});
+```
+
+### validate(schema, input)
+
+Synchronous validation that returns a tuple.
+
+```typescript
+import { validate, z } from '@watthem/fieldtest';
+
+const schema = z.object({ name: z.string() });
+const [success, result] = validate(schema, { name: 'Alice' });
+
+if (success) {
+  console.log(result.name); // Type-safe
+} else {
+  console.error(result); // ZodError
+}
+```
 
 - **Parameters:**
-  - `name: string` - Schema identifier
-  - `schema: StandardSchemaV1` - The schema definition
+  - `schema: z.ZodType<T>` - A Zod schema
+  - `input: unknown` - The data to validate
+- **Returns:** `[boolean, T | z.ZodError]`
 
-### getSchema(name)
+### formatZodError(error)
 
-Retrieves a registered schema by name.
+Formats a Zod error into a human-readable string.
 
-- **Parameters:**
-  - `name: string` - Schema identifier
-- **Returns:** `StandardSchemaV1 | undefined`
+```typescript
+import { formatZodError, validate, z } from '@watthem/fieldtest';
+
+const [success, result] = validate(z.string(), 123);
+if (!success) {
+  console.error(formatZodError(result));
+  // Output: "Expected string, received number"
+}
+```
 
 ## Types
 
-For complete type definitions, see the TypeScript source files in `packages/core/src/types.ts`.
+### FieldTestDocument
 
-Key types:
-- `StandardSchemaV1` - Schema definition interface
-- `ValidationResult` - Validation output
-- `FieldTestDocument` - Parsed document structure
-- `ParsedMarkdown` - Markdown parsing result
+Represents a parsed markdown document.
 
+```typescript
+interface FieldTestDocument {
+  /** The original raw markdown content */
+  raw: string;
+  /** Parsed frontmatter data */
+  frontmatter: any;
+  /** The main body content without frontmatter */
+  body: string;
+}
+```
+
+### StandardSchemaV1
+
+The Standard Schema interface for universal validation compatibility. See [standardschema.dev](https://standardschema.dev) for the full specification.
+
+Zod, Valibot, and other libraries implement this interface, allowing FieldTest to work with any compliant schema library.
+
+### ValidationOptions
+
+```typescript
+interface ValidationOptions {
+  /** Throw error on validation failure instead of returning result object */
+  throwOnError?: boolean;
+}
+```
+
+## OpenAPI Helpers
+
+FieldTest includes OpenAPI to Zod conversion via `@fieldtest/openapi`.
+
+- **Guide:** [OpenAPI Integration](/guides/openapi-integration)
+- **Reference:** [OpenAPI Reference](/reference/openapi)

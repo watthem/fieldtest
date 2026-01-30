@@ -16,12 +16,14 @@ Step-by-step instructions for common tasks:
 - **[Schema Validation Guide](./guides/schema-validation.md)** — Create schemas and validate content
 - **[Framework Integration](./guides/framework-integration.md)** — Use FieldTest with Astro, Next.js, and other frameworks
 - **[Biome Integration](./guides/biome-integration.md)** — Set up Biome linting with FieldTest plugins
+- **[OpenAPI Integration](./guides/openapi-integration.md)** — Generate Zod schemas from OpenAPI specs
 
 ## 📚 Reference
 
 Complete API documentation:
 
 - **[API Reference](./reference/api.md)** — All functions, types, and utilities
+- **[OpenAPI Reference](./reference/openapi.md)** — OpenAPI → Zod conversion helpers
 
 ## 💡 Explainers (Understanding)
 

@@ -50,11 +50,25 @@ fieldtest/
 
 📚 **Schema Registry** — Reuse and manage validation schemas across projects
 
+🧩 **OpenAPI Helpers** — Generate Zod schemas from OpenAPI specs for request/response validation
+
 🔄 **Markdown Processing** — Parse and serialize markdown with frontmatter
 
 🤖 **AI Workflows** — Model Context Protocol (MCP) server for AI-powered content validation
 
 🛠️ **Biome Plugins** — Custom GritQL linting rules for migration assistance and best practices
+
+## OpenAPI Quickstart
+
+```ts
+import { loadOpenApiSchemas } from "@fieldtest/openapi";
+import { validate } from "@fieldtest/validation-lib";
+
+const registry = loadOpenApiSchemas("./openapi.yaml");
+const createUser = registry.paths["/users"].post;
+
+const [ok] = validate(createUser.requestBody!, { name: "Ada" });
+```
 
 ## 🚀 Quick Start
 

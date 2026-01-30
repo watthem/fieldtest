@@ -1,5 +1,8 @@
 import { defineConfig } from "vitepress";
 
+const plausibleDomain =
+  process.env.PLAUSIBLE_DOMAIN || "fieldtest.matthewhendricks.net";
+
 export default defineConfig({
   title: "FieldTest",
   description:
@@ -176,7 +179,7 @@ export default defineConfig({
       "script",
       {
         defer: "",
-        "data-domain": "docs.matthewhendricks.net",
+        "data-domain": plausibleDomain,
         src: "https://plausible.io/js/script.js",
       },
     ],
@@ -217,7 +220,8 @@ export default defineConfig({
               link: "/guides/framework-integration",
             },
             { text: "Biome Integration", link: "/guides/biome-integration" },
-            { text: "Standard Schema", link: "/guides/standard-schema" },
+            { text: "OpenAPI Integration", link: "/guides/openapi-integration" },
+            { text: "Standard Schema", link: "/explainers/standard-schema" },
           ],
         },
         {
@@ -225,13 +229,6 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: "Overview", link: "/examples/" },
-            { text: "Blog Validation", link: "/examples/blog-validation" },
-            { text: "CMS Integration", link: "/examples/cms-integration" },
-            {
-              text: "Astro Content Collections",
-              link: "/examples/astro-content",
-            },
-            { text: "Next.js Pages", link: "/examples/nextjs-pages" },
           ],
         },
         {
@@ -239,18 +236,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: "API Reference", link: "/reference/api" },
-            { text: "Types", link: "/reference/types" },
-            { text: "Built-in Schemas", link: "/reference/schemas" },
-            { text: "Error Codes", link: "/reference/errors" },
-          ],
-        },
-        {
-          text: "Advanced",
-          collapsed: true,
-          items: [
-            { text: "MCP Integration", link: "/advanced/mcp" },
-            { text: "Performance", link: "/advanced/performance" },
-            { text: "Custom Schemas", link: "/advanced/custom-schemas" },
+            { text: "OpenAPI Reference", link: "/reference/openapi" },
           ],
         },
       ],
