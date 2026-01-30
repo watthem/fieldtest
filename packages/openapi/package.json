@@ -1,0 +1,46 @@
+{
+  "name": "@fieldtest/openapi",
+  "version": "0.1.0",
+  "description": "OpenAPI helpers for FieldTest (OpenAPI -> Zod).",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": ["dist/**", "README.md", "CHANGELOG.md", "LICENSE"],
+  "author": "Matthew Hendricks <hello@matthewhendricks.net>",
+  "license": "MIT",
+  "homepage": "https://github.com/watthem/fieldtest",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/watthem/fieldtest.git",
+    "directory": "packages/openapi"
+  },
+  "bugs": {
+    "url": "https://github.com/watthem/fieldtest/issues"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/**/*.ts",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "zod": "^3.22.4",
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.56.0",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
