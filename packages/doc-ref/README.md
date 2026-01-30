@@ -21,6 +21,35 @@ npm install @fieldtest/doc-ref
 pnpm add @fieldtest/doc-ref
 ```
 
+## Two Modes of Use
+
+This tool supports two complementary workflows:
+
+### 1. Doc → Test Validation
+Validate that your documentation is structured correctly and contains expected content.
+
+```typescript
+import { getSections, parseMarkdownFile } from '@fieldtest/doc-ref';
+
+// Check that install guide has platform sections
+const sections = getSections('docs/install.md');
+const titles = sections.map(s => s.title.toLowerCase());
+expect(titles.some(t => t.includes('linux'))).toBe(true);
+```
+
+### 2. Test → Doc Linking
+Ensure tests reference real documentation and those references stay valid.
+
+```typescript
+import { generateReport } from '@fieldtest/doc-ref';
+
+// Validate all DOC: references in test files point to real docs
+const report = await generateReport('./my-project');
+if (report.invalidRefs > 0) {
+  console.error(`${report.invalidRefs} broken doc references`);
+}
+```
+
 ## Quick Start
 
 ```typescript
@@ -81,6 +110,123 @@ All patterns support nested directory paths:
 - `docs/public/reference/api.md`
 - `docs/guides/setup.md#installation`
 - `docs/public/api.md:50-75`
+
+## Quick Reference
+
+### Type Signatures
+
+```typescript
+// Markdown parsing - these take file paths, not ParsedDoc objects
+function parseMarkdownFile(filePath: string): ParsedDoc
+function parseMarkdown(content: string): ParsedDoc      // For raw strings
+function getSections(filePath: string): DocSection[]    // Convenience wrapper
+function getSection(filePath: string, anchor: string): DocSection | undefined
+function hasAnchor(filePath: string, anchor: string): boolean
+
+// Report generation
+function generateReport(projectDir: string, options?: DocRefOptions): Promise<ValidationReport>
+function formatReport(report: ValidationReport): string
+
+// Low-level scanning
+function scanDocReferences(projectDir: string, options?: DocRefOptions): Promise<DocReference[]>
+function validateReferences(refs: DocReference[], projectDir: string): ValidationResult[]
+```
+
+### Key Types
+
+```typescript
+interface ParsedDoc {
+  sections: Map<string, DocSection>;  // Keyed by slug
+  anchors: string[];                   // All section slugs
+  lineCount: number;
+}
+
+interface DocSection {
+  title: string;      // Original heading text
+  slug: string;       // URL-friendly anchor
+  level: number;      // 1-6 for markdown, 0 for HTML id
+  line: number;       // Line number in file
+  content: string;    // Section text (excluding heading)
+  examples: CodeExample[];
+  assertions: DocAssertion[];
+}
+```
+
+## Common Patterns
+
+### Validate doc structure exists
+
+```typescript
+import { getSections } from '@fieldtest/doc-ref';
+
+const sections = getSections('docs/api.md');
+expect(sections.some(s => s.title === 'Authentication')).toBe(true);
+```
+
+### Check for required platform sections
+
+```typescript
+import { getSections } from '@fieldtest/doc-ref';
+
+const sections = getSections('docs/install.md');
+const titles = sections.map(s => s.title.toLowerCase());
+
+expect(titles.some(t => t.includes('linux'))).toBe(true);
+expect(titles.some(t => t.includes('macos'))).toBe(true);
+expect(titles.some(t => t.includes('windows'))).toBe(true);
+```
+
+### Validate internal links
+
+```typescript
+import { parseMarkdownFile } from '@fieldtest/doc-ref';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const docsDir = 'docs';
+const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md'));
+
+for (const file of files) {
+  const content = fs.readFileSync(path.join(docsDir, file), 'utf-8');
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let match;
+
+  while ((match = linkRegex.exec(content)) !== null) {
+    const [, , linkPath] = match;
+    if (linkPath.startsWith('/') || linkPath.startsWith('./')) {
+      const resolved = path.resolve(docsDir, linkPath.replace(/^\//, ''));
+      expect(fs.existsSync(resolved)).toBe(true);
+    }
+  }
+}
+```
+
+### Extract and test code examples
+
+```typescript
+import { getSections } from '@fieldtest/doc-ref';
+
+const sections = getSections('docs/api.md');
+const authSection = sections.find(s => s.slug === 'authentication');
+
+// Verify examples exist
+expect(authSection?.examples.length).toBeGreaterThan(0);
+
+// Get the first code example
+const example = authSection?.examples[0];
+expect(example?.lang).toBe('typescript');
+```
+
+### Link tests to doc sections
+
+```typescript
+// DOC: docs/api.md#rate-limits
+describe('Rate Limits', () => {
+  it('enforces 100 requests per minute', () => {
+    // Test implementation tied to documented behavior
+  });
+});
+```
 
 ## API
 

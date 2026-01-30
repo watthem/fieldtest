@@ -18,8 +18,20 @@ import type {
 } from "./types";
 
 /**
- * Convert heading text to a URL-friendly slug
- * Matches how VitePress/GitHub generate anchor links
+ * Convert heading text to a URL-friendly slug.
+ * Matches how VitePress/GitHub generate anchor links.
+ *
+ * @param text - The heading text to slugify
+ * @returns URL-friendly slug
+ *
+ * @example
+ * ```typescript
+ * import { slugify } from '@fieldtest/doc-ref';
+ *
+ * slugify('How It Works');     // → 'how-it-works'
+ * slugify('API Reference');    // → 'api-reference'
+ * slugify('v2.0 Changes!');    // → 'v20-changes'
+ * ```
  */
 export function slugify(text: string): string {
 	return text
@@ -31,7 +43,25 @@ export function slugify(text: string): string {
 }
 
 /**
- * Extract code examples from markdown content (fenced code blocks)
+ * Extract code examples from markdown content (fenced code blocks).
+ *
+ * @param content - Raw markdown string to parse
+ * @returns Array of code examples with language, meta, and parsed input/output
+ *
+ * @example
+ * ```typescript
+ * import { extractExamples } from '@fieldtest/doc-ref';
+ *
+ * const markdown = `
+ * Here's an example:
+ * \`\`\`typescript
+ * const x = 1;
+ * \`\`\`
+ * `;
+ *
+ * const examples = extractExamples(markdown);
+ * // → [{ lang: 'typescript', meta: '', code: 'const x = 1;' }]
+ * ```
  */
 export function extractExamples(content: string): CodeExample[] {
 	const examples: CodeExample[] = [];
@@ -62,15 +92,25 @@ export function extractExamples(content: string): CodeExample[] {
 }
 
 /**
- * Parse structured examples that follow input → output patterns
+ * Parse structured examples that follow input → output patterns.
  *
  * Supports formats like:
+ * - `input: [1, 2, 3]` with `output: 6`
+ * - `input: { "name": "test" }` with `expected: true`
+ *
+ * @param code - Code block content to parse
+ * @returns Object with parsed `input` and `expected` values (if found)
+ *
+ * @example
+ * ```typescript
+ * import { parseStructuredExample } from '@fieldtest/doc-ref';
+ *
+ * const result = parseStructuredExample(`
  *   input: [1, 2, 3]
  *   output: 6
- *
- * Or:
- *   input: { "name": "test" }
- *   expected: true
+ * `);
+ * // → { input: [1, 2, 3], expected: 6 }
+ * ```
  */
 export function parseStructuredExample(code: string): {
 	input?: unknown;
@@ -103,15 +143,31 @@ export function parseStructuredExample(code: string): {
 }
 
 /**
- * Extract assertion-like statements from markdown
+ * Extract assertion-like statements from markdown content.
  *
  * Looks for patterns like:
- *   - MUST: <requirement>
- *   - SHOULD: <requirement>
- *   - SHALL: <requirement>
- *   - REQUIRE: <requirement>
- *   - Given X, When Y, Then Z (Gherkin)
- *   - Bullet points starting with "should", "must", etc.
+ * - `MUST:`, `SHOULD:`, `SHALL:`, `REQUIRE:` statements
+ * - Gherkin: `Given X, When Y, Then Z`
+ * - Bullet points starting with "should", "must", etc.
+ *
+ * @param content - Raw markdown string to parse
+ * @returns Array of assertions with type, text, and keyword
+ *
+ * @example
+ * ```typescript
+ * import { extractAssertions } from '@fieldtest/doc-ref';
+ *
+ * const markdown = `
+ * MUST: Return 200 on success
+ * - should handle empty input gracefully
+ * `;
+ *
+ * const assertions = extractAssertions(markdown);
+ * // → [
+ * //   { type: 'requirement', text: 'Return 200 on success', keyword: 'MUST' },
+ * //   { type: 'behavior', text: 'should handle empty input gracefully' }
+ * // ]
+ * ```
  */
 export function extractAssertions(content: string): DocAssertion[] {
 	const assertions: DocAssertion[] = [];
@@ -153,13 +209,38 @@ export function extractAssertions(content: string): DocAssertion[] {
 }
 
 /**
- * Parse a markdown file and extract sections by heading
+ * Parse a markdown string and extract sections by heading.
  *
- * Each section includes:
- * - Title and slug (anchor)
- * - Content (text between this heading and the next)
- * - Code examples
- * - Assertions
+ * Returns a `ParsedDoc` with:
+ * - `sections`: Map of slug → DocSection
+ * - `anchors`: Array of all section slugs
+ * - `lineCount`: Total lines in the document
+ *
+ * Each `DocSection` contains:
+ * - `title`, `slug`, `level`, `line`
+ * - `content`: Text between this heading and the next
+ * - `examples`: Code blocks in this section
+ * - `assertions`: MUST/SHOULD statements found
+ *
+ * @param content - Raw markdown string to parse
+ * @returns Parsed document with sections, anchors, and line count
+ *
+ * @example
+ * ```typescript
+ * import { parseMarkdown } from '@fieldtest/doc-ref';
+ *
+ * const parsed = parseMarkdown(`
+ * # Installation
+ * Run npm install.
+ *
+ * ## Linux
+ * Use apt-get.
+ * `);
+ *
+ * parsed.anchors;           // → ['installation', 'linux']
+ * parsed.lineCount;         // → 7
+ * parsed.sections.get('linux')?.content;  // → 'Use apt-get.'
+ * ```
  */
 export function parseMarkdown(content: string): ParsedDoc {
 	const sections = new Map<string, DocSection>();
@@ -230,7 +311,29 @@ export function parseMarkdown(content: string): ParsedDoc {
 }
 
 /**
- * Parse a markdown file from disk
+ * Parse a markdown file from disk.
+ *
+ * This is a convenience wrapper that reads the file and calls `parseMarkdown()`.
+ *
+ * @param filePath - Absolute or relative path to the markdown file
+ * @returns Parsed document with sections, anchors, and line count
+ *
+ * @example
+ * ```typescript
+ * import { parseMarkdownFile } from '@fieldtest/doc-ref';
+ *
+ * const parsed = parseMarkdownFile('docs/api.md');
+ *
+ * // Access the ParsedDoc structure:
+ * parsed.sections;   // Map<string, DocSection>
+ * parsed.anchors;    // string[] - all section slugs
+ * parsed.lineCount;  // number
+ *
+ * // Get a specific section:
+ * const authSection = parsed.sections.get('authentication');
+ * authSection?.content;   // The section's markdown content
+ * authSection?.examples;  // Code blocks in that section
+ * ```
  */
 export function parseMarkdownFile(filePath: string): ParsedDoc {
 	const content = fs.readFileSync(filePath, "utf-8");
@@ -238,7 +341,20 @@ export function parseMarkdownFile(filePath: string): ParsedDoc {
 }
 
 /**
- * Check if a markdown file contains a specific anchor (section slug)
+ * Check if a markdown file contains a specific anchor (section slug).
+ *
+ * @param filePath - Path to the markdown file
+ * @param anchor - The anchor/slug to check for (e.g., 'authentication')
+ * @returns `true` if the anchor exists, `false` otherwise
+ *
+ * @example
+ * ```typescript
+ * import { hasAnchor } from '@fieldtest/doc-ref';
+ *
+ * if (hasAnchor('docs/api.md', 'rate-limits')) {
+ *   console.log('Rate limits section exists');
+ * }
+ * ```
  */
 export function hasAnchor(filePath: string, anchor: string): boolean {
 	const parsed = parseMarkdownFile(filePath);
@@ -246,7 +362,23 @@ export function hasAnchor(filePath: string, anchor: string): boolean {
 }
 
 /**
- * Get a specific section from a markdown file
+ * Get a specific section from a markdown file by its anchor/slug.
+ *
+ * @param filePath - Path to the markdown file
+ * @param anchor - The anchor/slug of the section to retrieve
+ * @returns The DocSection if found, `undefined` otherwise
+ *
+ * @example
+ * ```typescript
+ * import { getSection } from '@fieldtest/doc-ref';
+ *
+ * const section = getSection('docs/api.md', 'authentication');
+ * if (section) {
+ *   console.log(section.title);    // 'Authentication'
+ *   console.log(section.content);  // Section markdown content
+ *   console.log(section.examples); // Code blocks in section
+ * }
+ * ```
  */
 export function getSection(
 	filePath: string,
@@ -257,7 +389,30 @@ export function getSection(
 }
 
 /**
- * Get all sections from a markdown file
+ * Get all sections from a markdown file as an array.
+ *
+ * This is a convenience wrapper that parses the file and returns all sections.
+ * **Note:** Takes a file path, not a ParsedDoc. If you already have a ParsedDoc,
+ * use `Array.from(parsed.sections.values())` instead.
+ *
+ * @param filePath - Path to the markdown file
+ * @returns Array of all DocSection objects in the file
+ *
+ * @example
+ * ```typescript
+ * import { getSections } from '@fieldtest/doc-ref';
+ *
+ * // Get all sections from a file
+ * const sections = getSections('docs/install.md');
+ *
+ * // Check for required sections
+ * const titles = sections.map(s => s.title.toLowerCase());
+ * expect(titles.some(t => t.includes('linux'))).toBe(true);
+ * expect(titles.some(t => t.includes('macos'))).toBe(true);
+ *
+ * // Find sections with code examples
+ * const withExamples = sections.filter(s => s.examples.length > 0);
+ * ```
  */
 export function getSections(filePath: string): DocSection[] {
 	const parsed = parseMarkdownFile(filePath);
@@ -265,16 +420,27 @@ export function getSections(filePath: string): DocSection[] {
 }
 
 /**
- * Parse a markdown table into an array of objects
+ * Parse a markdown table into an array of objects.
  *
- * Input:
- *   | input | expected |
- *   |-------|----------|
- *   | 1     | 2        |
- *   | 2     | 4        |
+ * Headers become object keys, values are parsed as JSON when possible.
  *
- * Output:
- *   [{ input: 1, expected: 2 }, { input: 2, expected: 4 }]
+ * @param markdown - Markdown table string
+ * @returns Array of objects, one per row
+ *
+ * @example
+ * ```typescript
+ * import { parseTable } from '@fieldtest/doc-ref';
+ *
+ * const table = `
+ * | input | expected |
+ * |-------|----------|
+ * | 1     | 2        |
+ * | 2     | 4        |
+ * `;
+ *
+ * parseTable(table);
+ * // → [{ input: 1, expected: 2 }, { input: 2, expected: 4 }]
+ * ```
  */
 export function parseTable(markdown: string): TableRow[] {
 	const lines = markdown
@@ -309,7 +475,33 @@ export function parseTable(markdown: string): TableRow[] {
 }
 
 /**
- * Find all tables in a markdown section and parse them
+ * Find all tables in markdown content and parse them.
+ *
+ * @param content - Markdown string containing tables
+ * @returns Array of parsed tables, each table is an array of row objects
+ *
+ * @example
+ * ```typescript
+ * import { extractTables } from '@fieldtest/doc-ref';
+ *
+ * const markdown = `
+ * ## Test Cases
+ * | input | output |
+ * |-------|--------|
+ * | 1     | 2      |
+ *
+ * ## Error Cases
+ * | code | message |
+ * |------|---------|
+ * | 404  | "Not found" |
+ * `;
+ *
+ * const tables = extractTables(markdown);
+ * // → [
+ * //   [{ input: 1, output: 2 }],
+ * //   [{ code: 404, message: 'Not found' }]
+ * // ]
+ * ```
  */
 export function extractTables(content: string): TableRow[][] {
 	const tables: TableRow[][] = [];
