@@ -1,12 +1,12 @@
 {
 	"name": "@fieldtest/doc-ref",
-	"version": "0.1.0",
+	"version": "1.0.1",
 	"description": "Doc-driven testing validation - ensure tests reference documentation and those references are valid",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"bin": {
-		"doc-ref": "./dist/src/cli.js"
+		"doc-ref": "dist/src/cli.js"
 	},
 	"exports": {
 		".": {
@@ -46,7 +46,7 @@
 	"homepage": "https://github.com/watthem/fieldtest/tree/main/packages/doc-ref",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/watthem/fieldtest.git",
+		"url": "git+https://github.com/watthem/fieldtest.git",
 		"directory": "packages/doc-ref"
 	},
 	"bugs": {
