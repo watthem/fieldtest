@@ -1,56 +1,65 @@
 {
-	"name": "@fieldtest/registry",
-	"version": "0.0.1",
-	"description": "Schema registry for FieldTest SDK",
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
-	"exports": {
-		".": {
-			"require": "./dist/index.js",
-			"import": "./dist/index.mjs",
-			"types": "./dist/index.d.ts"
-		},
-		"./obsidian-bases": {
-			"require": "./dist/obsidian-bases-schema.js",
-			"import": "./dist/obsidian-bases-schema.mjs",
-			"types": "./dist/obsidian-bases-schema.d.ts"
-		}
-	},
-	"sideEffects": false,
-	"files": ["dist/**"],
-	"scripts": {
-		"build": "tsup",
-		"dev": "tsup --watch",
-		"clean": "rimraf dist",
-		"lint": "eslint src --ext .ts",
-		"test": "vitest run --passWithNoTests",
-		"example": "ts-node -O '{\"module\":\"commonjs\"}' standard-schema.example.ts",
-		"run-examples": "ts-node run-examples.ts"
-	},
-	"keywords": ["fieldtest", "markdown", "schema", "registry", "obsidian", "bases"],
-	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
-	"license": "MIT",
-	"homepage": "https://github.com/watthem/fieldtest",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/watthem/fieldtest.git",
-		"directory": "packages/registry"
-	},
-	"bugs": {
-		"url": "https://github.com/watthem/fieldtest/issues"
-	},
-	"devDependencies": {
-		"@types/node": "^18.19.101",
-		"eslint": "^8.49.0",
-		"ts-node": "^10.9.2",
-		"tsup": "^7.2.0",
-		"typescript": "^5.8.3",
-		"vitest": "^0.34.4"
-	},
-	"dependencies": {
-		"@fieldtest/core": "workspace:^",
-		"@fieldtest/validate": "workspace:^",
-		"zod": "^3.22.4"
-	}
+  "name": "@fieldtest/registry",
+  "version": "1.0.1",
+  "description": "Schema registry for FieldTest SDK",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./obsidian-bases": {
+      "require": "./dist/obsidian-bases-schema.js",
+      "import": "./dist/obsidian-bases-schema.mjs",
+      "types": "./dist/obsidian-bases-schema.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run --passWithNoTests",
+    "example": "ts-node -O '{\"module\":\"commonjs\"}' standard-schema.example.ts",
+    "run-examples": "ts-node run-examples.ts"
+  },
+  "keywords": [
+    "fieldtest",
+    "markdown",
+    "schema",
+    "registry",
+    "obsidian",
+    "bases"
+  ],
+  "author": "Matthew Hendricks <hello@matthewhendricks.net>",
+  "license": "MIT",
+  "homepage": "https://github.com/watthem/fieldtest",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/watthem/fieldtest.git",
+    "directory": "packages/registry"
+  },
+  "bugs": {
+    "url": "https://github.com/watthem/fieldtest/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.101",
+    "eslint": "^8.49.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^7.2.0",
+    "typescript": "^5.8.3",
+    "vitest": "^0.34.4"
+  },
+  "dependencies": {
+    "@fieldtest/core": "workspace:^",
+    "@fieldtest/validate": "workspace:^",
+    "zod": "^3.22.4"
+  }
 }

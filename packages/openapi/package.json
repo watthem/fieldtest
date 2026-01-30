@@ -1,6 +1,6 @@
 {
   "name": "@fieldtest/openapi",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "OpenAPI helpers for FieldTest (OpenAPI -> Zod).",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -12,7 +12,12 @@
       "import": "./dist/index.mjs"
     }
   },
-  "files": ["dist/**", "README.md", "CHANGELOG.md", "LICENSE"],
+  "files": [
+    "dist/**",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "author": "Matthew Hendricks <hello@matthewhendricks.net>",
   "license": "MIT",
   "homepage": "https://github.com/watthem/fieldtest",
