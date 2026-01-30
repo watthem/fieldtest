@@ -7,18 +7,43 @@ import { DEFAULT_OPTIONS } from "./types";
 /**
  * Regex patterns to match doc references in test files
  *
- * Only matches patterns with explicit line numbers or anchors (doc-driven testing pattern):
- * - docs/reference.md:206
- * - docs/reference.md:206-209
- * - reference.md:207
- * - docs/explainer.md#how-it-works
- * - (reference.md:207)
- * - "docs/guide.md:50"
+ * Pattern 1: DOC: comment pattern (most explicit, preferred)
+ *   - DOC: docs/public/reference/api.md
+ *   - DOC: reference.md
+ *   - * DOC: docs/guide.md (in JSDoc)
  *
- * Does NOT match bare .md references like "test.md" or "a.md" (test fixtures)
+ * Pattern 2: Line number references
+ *   - docs/reference.md:206
+ *   - docs/reference.md:206-209
+ *   - reference.md:207
+ *
+ * Pattern 3: Anchor references
+ *   - docs/explainer.md#how-it-works
+ *   - explainer.md#section-name
+ *
+ * Pattern 4: Parenthesized doc paths in test descriptions
+ *   - describe("Rate Limits (docs/public/reference/api.md)", ...)
+ *   - it("works (api.md)", ...)
  */
-const DOC_REF_PATTERN =
-	/(?:["'(])?(?:docs\/)?([a-zA-Z0-9_-]+\.md)(?::(\d+)(?:-(\d+))?|#([a-zA-Z0-9_-]+))(?:["')])?/g;
+
+// Pattern 1: DOC: comment - captures full path including nested dirs
+// Matches: DOC: docs/public/reference/api.md, DOC: reference.md
+const DOC_COMMENT_PATTERN = /DOC:\s*([^\s*\n]+\.md)/g;
+
+// Pattern 2: Line number reference - supports nested paths
+// Matches: docs/public/reference.md:206, reference.md:207, docs/guide.md:10-20
+const LINE_REF_PATTERN =
+	/(?:["'(])?(((?:docs\/)?(?:[\w-]+\/)*[\w-]+\.md)):(\d+)(?:-(\d+))?(?:["')])?/g;
+
+// Pattern 3: Anchor reference - supports nested paths
+// Matches: docs/explainer.md#how-it-works, guide.md#setup
+const ANCHOR_REF_PATTERN =
+	/(?:["'(])?(((?:docs\/)?(?:[\w-]+\/)*[\w-]+\.md))#([\w-]+)(?:["')])?/g;
+
+// Pattern 4: Parenthesized path in test descriptions (without line/anchor)
+// Matches: (docs/public/reference/api.md), (api.md)
+// Must be in parens to avoid matching random .md mentions
+const PAREN_PATH_PATTERN = /\((((?:docs\/)?(?:[\w-]+\/)*[\w-]+\.md))\)/g;
 
 /**
  * Parse a raw doc reference string into structured data
@@ -27,33 +52,63 @@ export function parseDocReference(
 	raw: string,
 	testFile: string,
 ): DocReference | null {
-	// Reset regex state
-	DOC_REF_PATTERN.lastIndex = 0;
+	// Try DOC: pattern first
+	DOC_COMMENT_PATTERN.lastIndex = 0;
+	let match = DOC_COMMENT_PATTERN.exec(raw);
+	if (match) {
+		return {
+			testFile,
+			docPath: match[1],
+			raw: match[0],
+		};
+	}
 
-	const match = DOC_REF_PATTERN.exec(raw);
-	if (!match) return null;
-
-	const [fullMatch, docFile, lineStart, lineEnd, anchor] = match;
-
-	const ref: DocReference = {
-		testFile,
-		docPath: raw.includes("docs/") ? `docs/${docFile}` : docFile,
-		raw: fullMatch,
-	};
-
-	if (lineStart) {
+	// Try line reference pattern
+	LINE_REF_PATTERN.lastIndex = 0;
+	match = LINE_REF_PATTERN.exec(raw);
+	if (match) {
+		const [fullMatch, docPath, , lineStart, lineEnd] = match;
+		const ref: DocReference = {
+			testFile,
+			docPath,
+			raw: fullMatch,
+		};
 		if (lineEnd) {
-			ref.lineRef = { start: Number.parseInt(lineStart, 10), end: Number.parseInt(lineEnd, 10) };
+			ref.lineRef = {
+				start: Number.parseInt(lineStart, 10),
+				end: Number.parseInt(lineEnd, 10),
+			};
 		} else {
 			ref.lineRef = Number.parseInt(lineStart, 10);
 		}
+		return ref;
 	}
 
-	if (anchor) {
-		ref.anchorRef = anchor;
+	// Try anchor reference pattern
+	ANCHOR_REF_PATTERN.lastIndex = 0;
+	match = ANCHOR_REF_PATTERN.exec(raw);
+	if (match) {
+		const [fullMatch, docPath, , anchor] = match;
+		return {
+			testFile,
+			docPath,
+			anchorRef: anchor,
+			raw: fullMatch,
+		};
 	}
 
-	return ref;
+	// Try parenthesized path pattern
+	PAREN_PATH_PATTERN.lastIndex = 0;
+	match = PAREN_PATH_PATTERN.exec(raw);
+	if (match) {
+		return {
+			testFile,
+			docPath: match[1],
+			raw: match[0],
+		};
+	}
+
+	return null;
 }
 
 /**
@@ -62,39 +117,68 @@ export function parseDocReference(
 export function scanTestFile(filePath: string): DocReference[] {
 	const content = fs.readFileSync(filePath, "utf-8");
 	const refs: DocReference[] = [];
+	const seen = new Set<string>(); // Dedupe by raw match + docPath
 
-	// Reset regex state
-	DOC_REF_PATTERN.lastIndex = 0;
+	// Helper to add ref if not duplicate
+	const addRef = (ref: DocReference) => {
+		const key = `${ref.docPath}:${ref.lineRef ?? ""}:${ref.anchorRef ?? ""}`;
+		if (!seen.has(key)) {
+			seen.add(key);
+			refs.push(ref);
+		}
+	};
 
+	// Scan with DOC: comment pattern (highest priority)
+	DOC_COMMENT_PATTERN.lastIndex = 0;
 	let match: RegExpExecArray | null;
-	while ((match = DOC_REF_PATTERN.exec(content)) !== null) {
-		const [fullMatch, docFile, lineStart, lineEnd, anchor] = match;
+	while ((match = DOC_COMMENT_PATTERN.exec(content)) !== null) {
+		addRef({
+			testFile: filePath,
+			docPath: match[1],
+			raw: match[0],
+		});
+	}
 
-		// Skip if no doc file matched
-		if (!docFile) continue;
-
+	// Scan with line reference pattern
+	LINE_REF_PATTERN.lastIndex = 0;
+	while ((match = LINE_REF_PATTERN.exec(content)) !== null) {
+		const [fullMatch, docPath, , lineStart, lineEnd] = match;
 		const ref: DocReference = {
 			testFile: filePath,
-			docPath: fullMatch.includes("docs/") ? `docs/${docFile}` : docFile,
+			docPath,
 			raw: fullMatch,
 		};
-
-		if (lineStart) {
-			if (lineEnd) {
-				ref.lineRef = {
-					start: Number.parseInt(lineStart, 10),
-					end: Number.parseInt(lineEnd, 10),
-				};
-			} else {
-				ref.lineRef = Number.parseInt(lineStart, 10);
-			}
+		if (lineEnd) {
+			ref.lineRef = {
+				start: Number.parseInt(lineStart, 10),
+				end: Number.parseInt(lineEnd, 10),
+			};
+		} else {
+			ref.lineRef = Number.parseInt(lineStart, 10);
 		}
+		addRef(ref);
+	}
 
-		if (anchor) {
-			ref.anchorRef = anchor;
-		}
+	// Scan with anchor reference pattern
+	ANCHOR_REF_PATTERN.lastIndex = 0;
+	while ((match = ANCHOR_REF_PATTERN.exec(content)) !== null) {
+		const [fullMatch, docPath, , anchor] = match;
+		addRef({
+			testFile: filePath,
+			docPath,
+			anchorRef: anchor,
+			raw: fullMatch,
+		});
+	}
 
-		refs.push(ref);
+	// Scan with parenthesized path pattern
+	PAREN_PATH_PATTERN.lastIndex = 0;
+	while ((match = PAREN_PATH_PATTERN.exec(content)) !== null) {
+		addRef({
+			testFile: filePath,
+			docPath: match[1],
+			raw: match[0],
+		});
 	}
 
 	return refs;
