@@ -10,13 +10,22 @@
 	},
 	"exports": {
 		".": {
-			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.js"
+		},
+		"./vitest": {
+			"types": "./dist/vitest.d.ts",
+			"import": "./dist/vitest.mjs",
+			"require": "./dist/vitest.js"
 		}
 	},
 	"sideEffects": false,
-	"files": ["dist/**", "README.md", "CHANGELOG.md"],
+	"files": [
+		"dist/**",
+		"README.md",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",
@@ -31,7 +40,8 @@
 		"doc-driven",
 		"validation",
 		"test-coverage",
-		"typescript"
+		"typescript",
+		"vitest"
 	],
 	"homepage": "https://github.com/watthem/fieldtest/tree/main/packages/doc-ref",
 	"repository": {
@@ -50,13 +60,21 @@
 	"publishConfig": {
 		"access": "public"
 	},
+	"peerDependencies": {
+		"vitest": ">=1.0.0"
+	},
+	"peerDependenciesMeta": {
+		"vitest": {
+			"optional": true
+		}
+	},
 	"devDependencies": {
 		"@types/node": "^18.17.15",
 		"eslint": "^8.49.0",
 		"rimraf": "^5.0.0",
 		"tsup": "^7.2.0",
 		"typescript": "^5.2.2",
-		"vitest": "^0.34.4"
+		"vitest": "^4.0.18"
 	},
 	"dependencies": {
 		"fast-glob": "^3.3.2"
