@@ -11,8 +11,18 @@ export type {
 	DocSection,
 	ParsedDoc,
 	TableRow,
+	// Debt types
+	PromiseType,
+	PromiseConfidence,
+	VerificationMethod,
+	DebtSeverity,
+	DocPromise,
+	PromiseFulfillment,
+	DocDebt,
+	DebtReport,
+	DebtOptions,
 } from "./src/types";
-export { DEFAULT_OPTIONS } from "./src/types";
+export { DEFAULT_OPTIONS, DEFAULT_DEBT_OPTIONS } from "./src/types";
 
 // Scanner
 export {
@@ -37,7 +47,20 @@ export {
 	findTestsWithoutRefs,
 	generateReport,
 	formatReport,
+	formatDebtReport,
 } from "./src/reporter";
+export type { ReportOptions } from "./src/reporter";
+
+// Debt Detection (Promises)
+export {
+	extractPromises,
+	extractPromisesFromDoc,
+	scanExports,
+	scanSourceDefinitions,
+	hasTestCoverage,
+	verifyPromise,
+	calculateDebt,
+} from "./src/promises";
 
 // Markdown Parsing
 export {

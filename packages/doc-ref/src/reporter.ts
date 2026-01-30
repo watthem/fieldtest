@@ -1,18 +1,22 @@
 import * as path from "node:path";
 import type {
+	DebtOptions,
+	DebtReport,
 	DocCoverage,
+	DocDebt,
 	DocRefOptions,
 	DocReference,
 	ValidationReport,
 	ValidationResult,
 } from "./types";
-import { DEFAULT_OPTIONS } from "./types";
+import { DEFAULT_DEBT_OPTIONS, DEFAULT_OPTIONS } from "./types";
 import {
 	getDocFiles,
 	getTestFiles,
 	scanDocReferences,
 } from "./scanner";
 import { validateReferences } from "./validator";
+import { calculateDebt } from "./promises";
 
 /**
  * Calculate coverage statistics from references
@@ -78,11 +82,21 @@ export function findTestsWithoutRefs(
 }
 
 /**
+ * Options for report generation
+ */
+export interface ReportOptions extends DocRefOptions {
+	/** Enable documentation debt detection */
+	includeDebt?: boolean;
+	/** Debt detection options */
+	debtOptions?: DebtOptions;
+}
+
+/**
  * Generate a full validation report for a project
  */
 export async function generateReport(
 	projectDir: string,
-	options: DocRefOptions = {},
+	options: ReportOptions = {},
 ): Promise<ValidationReport> {
 	const opts = { ...DEFAULT_OPTIONS, ...options };
 
@@ -105,7 +119,7 @@ export async function generateReport(
 	const orphanedDocs = findOrphanedDocs(coverage);
 	const testsWithoutRefs = findTestsWithoutRefs(testFiles, references);
 
-	return {
+	const report: ValidationReport = {
 		projectDir,
 		totalRefs: references.length,
 		validRefs: results.filter((r) => r.valid).length,
@@ -115,6 +129,14 @@ export async function generateReport(
 		orphanedDocs,
 		testsWithoutRefs,
 	};
+
+	// Add debt analysis if enabled
+	if (options.includeDebt) {
+		const debtOpts = { ...DEFAULT_DEBT_OPTIONS, ...options.debtOptions };
+		report.debt = await calculateDebt(projectDir, opts, debtOpts);
+	}
+
+	return report;
 }
 
 /**
@@ -151,6 +173,74 @@ export function formatReport(report: ValidationReport): string {
 		lines.push(`\nTests Without Doc References: ${report.testsWithoutRefs.length}`);
 	}
 
+	// Include debt report if available
+	if (report.debt) {
+		lines.push(formatDebtReport(report.debt));
+	}
+
 	lines.push("");
+	return lines.join("\n");
+}
+
+/**
+ * Format debt report as a string for console output
+ */
+export function formatDebtReport(debt: DebtReport): string {
+	const lines: string[] = [];
+
+	lines.push(`\n=== Documentation Debt Report ===\n`);
+
+	if (debt.debts.length === 0) {
+		lines.push(`No documentation debt found!`);
+	} else {
+		// Group by severity
+		const critical = debt.debts.filter((d) => d.severity === "critical");
+		const warnings = debt.debts.filter((d) => d.severity === "warning");
+		const info = debt.debts.filter((d) => d.severity === "info");
+
+		if (critical.length > 0) {
+			lines.push(`CRITICAL (${critical.length}):`);
+			for (const d of critical) {
+				lines.push(formatDebtItem(d));
+			}
+			lines.push("");
+		}
+
+		if (warnings.length > 0) {
+			lines.push(`WARNING (${warnings.length}):`);
+			for (const d of warnings) {
+				lines.push(formatDebtItem(d));
+			}
+			lines.push("");
+		}
+
+		if (info.length > 0) {
+			lines.push(`INFO (${info.length}):`);
+			for (const d of info) {
+				lines.push(formatDebtItem(d));
+			}
+			lines.push("");
+		}
+	}
+
+	lines.push(`Debt Summary:`);
+	lines.push(
+		`  Promises: ${debt.totalPromises} | Fulfilled: ${debt.fulfilledCount} (${debt.fulfillmentRate.toFixed(0)}%) | Debt: ${debt.debtCount} (${(100 - debt.fulfillmentRate).toFixed(0)}%)`,
+	);
+
+	return lines.join("\n");
+}
+
+/**
+ * Format a single debt item for console output
+ */
+function formatDebtItem(debt: DocDebt): string {
+	const lines: string[] = [];
+	const { promise } = debt;
+
+	lines.push(`  - ${promise.identifier} (${promise.type})`);
+	lines.push(`    in: ${promise.source.file}#${promise.source.section}`);
+	lines.push(`    suggestion: ${debt.suggestion}`);
+
 	return lines.join("\n");
 }

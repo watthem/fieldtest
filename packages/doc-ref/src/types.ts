@@ -58,6 +58,8 @@ export interface ValidationReport {
 	orphanedDocs: string[];
 	/** Test files without any doc references */
 	testsWithoutRefs: string[];
+	/** Documentation debt report (if debt detection enabled) */
+	debt?: DebtReport;
 }
 
 /**
@@ -153,4 +155,114 @@ export interface ParsedDoc {
  */
 export interface TableRow {
 	[column: string]: unknown;
+}
+
+// ============================================================================
+// Documentation Debt Types
+// ============================================================================
+
+/**
+ * The type of promise extracted from documentation
+ */
+export type PromiseType = "function" | "api-endpoint" | "feature" | "requirement";
+
+/**
+ * Confidence level in the extracted promise
+ */
+export type PromiseConfidence = "explicit" | "inferred";
+
+/**
+ * How a promise was verified as fulfilled
+ */
+export type VerificationMethod =
+	| "test-exists"
+	| "code-exists"
+	| "export-exists"
+	| "not-found";
+
+/**
+ * Severity level for documentation debt
+ */
+export type DebtSeverity = "critical" | "warning" | "info";
+
+/**
+ * A "promise" extracted from documentation - something the docs claim exists
+ */
+export interface DocPromise {
+	/** Type of promise (function, API endpoint, feature, requirement) */
+	type: PromiseType;
+	/** The identifier being promised (e.g., "registerSchema") */
+	identifier: string;
+	/** Source location in documentation */
+	source: {
+		file: string;
+		section: string;
+		line?: number;
+	};
+	/** Raw text making the promise */
+	text: string;
+	/** How confident we are in this extraction */
+	confidence: PromiseConfidence;
+}
+
+/**
+ * Result of checking if a promise is fulfilled
+ */
+export interface PromiseFulfillment {
+	/** The promise that was checked */
+	promise: DocPromise;
+	/** Whether the promise is fulfilled */
+	fulfilled: boolean;
+	/** How the verification was performed */
+	verification: VerificationMethod;
+	/** Path to evidence (test file, source file, etc.) */
+	evidence?: string;
+}
+
+/**
+ * An unfulfilled promise = documentation debt
+ */
+export interface DocDebt {
+	/** The unfulfilled promise */
+	promise: DocPromise;
+	/** Severity of this debt */
+	severity: DebtSeverity;
+	/** Suggested action to resolve the debt */
+	suggestion: string;
+}
+
+/**
+ * Summary report of documentation debt
+ */
+export interface DebtReport {
+	/** Total promises found in documentation */
+	totalPromises: number;
+	/** Number of fulfilled promises */
+	fulfilledCount: number;
+	/** Number of unfulfilled promises (debt) */
+	debtCount: number;
+	/** Fulfillment percentage */
+	fulfillmentRate: number;
+	/** All fulfillment checks */
+	fulfillments: PromiseFulfillment[];
+	/** Unfulfilled promises as debt items */
+	debts: DocDebt[];
+}
+
+/**
+ * Options for debt detection
+ */
+export interface DebtOptions {
+	/** Source directories to scan for exports/implementations */
+	srcPatterns?: string[];
+	/** Package entry point (e.g., "index.ts") */
+	entryPoint?: string;
+	/** Include inferred promises (lower confidence) */
+	includeInferred?: boolean;
+}
+
+export const DEFAULT_DEBT_OPTIONS: Required<DebtOptions> = {
+	srcPatterns: ["src/**/*.ts", "src/**/*.js", "lib/**/*.ts", "lib/**/*.js"],
+	entryPoint: "index.ts",
+	includeInferred: false,
 }
