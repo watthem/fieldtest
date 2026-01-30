@@ -83,3 +83,74 @@ export const DEFAULT_OPTIONS: Required<DocRefOptions> = {
 	validateLines: true,
 	validateAnchors: true,
 };
+
+// ============================================================================
+// Markdown Parsing Types
+// ============================================================================
+
+/**
+ * A code example extracted from markdown
+ */
+export interface CodeExample {
+	/** Language of the code block (e.g., "typescript", "json") */
+	lang: string;
+	/** Meta string after language (e.g., "typescript:example") */
+	meta: string;
+	/** The raw code content */
+	code: string;
+	/** Parsed input value if found (from "input: ..." pattern) */
+	input?: unknown;
+	/** Parsed expected output if found (from "output: ..." or "expected: ..." pattern) */
+	expected?: unknown;
+}
+
+/**
+ * An assertion extracted from markdown content
+ */
+export interface DocAssertion {
+	/** Type of assertion */
+	type: "requirement" | "gherkin" | "behavior";
+	/** The assertion text */
+	text: string;
+	/** Keyword that identified this assertion (e.g., "MUST", "Given", "should") */
+	keyword?: string;
+}
+
+/**
+ * A section parsed from a markdown document
+ */
+export interface DocSection {
+	/** Section title (from heading) */
+	title: string;
+	/** URL-friendly slug (auto-generated from title) */
+	slug: string;
+	/** Heading level (1-6, or 0 for HTML id) */
+	level: number;
+	/** Line number where section starts */
+	line: number;
+	/** Raw content of the section (excluding heading) */
+	content: string;
+	/** Code examples found in this section */
+	examples: CodeExample[];
+	/** Assertions found in this section */
+	assertions: DocAssertion[];
+}
+
+/**
+ * A parsed markdown document
+ */
+export interface ParsedDoc {
+	/** All sections keyed by slug */
+	sections: Map<string, DocSection>;
+	/** List of all section slugs (anchors) */
+	anchors: string[];
+	/** Total line count */
+	lineCount: number;
+}
+
+/**
+ * A row parsed from a markdown table
+ */
+export interface TableRow {
+	[column: string]: unknown;
+}

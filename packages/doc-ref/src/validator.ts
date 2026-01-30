@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { DocReference, DocRefOptions, ValidationResult } from "./types";
 import { DEFAULT_OPTIONS } from "./types";
+import { parseMarkdownFile } from "./markdown";
 
 /**
  * Resolve a doc path to an absolute file path
@@ -23,33 +24,12 @@ export function resolveDocPath(
 }
 
 /**
- * Count the number of lines in a file
- */
-function getLineCount(filePath: string): number {
-	const content = fs.readFileSync(filePath, "utf-8");
-	return content.split("\n").length;
-}
-
-/**
- * Check if a markdown file contains a heading that matches an anchor
- */
-function hasAnchor(filePath: string, anchor: string): boolean {
-	const content = fs.readFileSync(filePath, "utf-8");
-
-	// Markdown headings create anchors by:
-	// 1. Converting to lowercase
-	// 2. Replacing spaces with hyphens
-	// 3. Removing special characters
-	const anchorPattern = new RegExp(
-		`^#+\\s+.*${anchor.replace(/-/g, "[\\s-]")}`,
-		"im",
-	);
-
-	return anchorPattern.test(content);
-}
-
-/**
  * Validate a single doc reference
+ *
+ * Checks:
+ * - File exists
+ * - Line numbers are within file bounds
+ * - Anchor references exist as headings in the markdown
  */
 export function validateReference(
 	reference: DocReference,
@@ -68,30 +48,38 @@ export function validateReference(
 		};
 	}
 
+	// Parse the markdown file for validation
+	const parsed = parseMarkdownFile(fullPath);
+
 	// Validate line references
 	if (reference.lineRef && opts.validateLines) {
-		const lineCount = getLineCount(fullPath);
 		const lineNum =
 			typeof reference.lineRef === "number"
 				? reference.lineRef
 				: reference.lineRef.end;
 
-		if (lineNum > lineCount) {
+		if (lineNum > parsed.lineCount) {
 			return {
 				reference,
 				valid: false,
-				error: `Line ${lineNum} exceeds file length (${lineCount} lines)`,
+				error: `Line ${lineNum} exceeds file length (${parsed.lineCount} lines)`,
 			};
 		}
 	}
 
-	// Validate anchor references
+	// Validate anchor references using proper markdown parsing
 	if (reference.anchorRef && opts.validateAnchors) {
-		if (!hasAnchor(fullPath, reference.anchorRef)) {
+		if (!parsed.anchors.includes(reference.anchorRef)) {
+			// Provide helpful error with available anchors
+			const available =
+				parsed.anchors.length > 0
+					? `Available: ${parsed.anchors.slice(0, 5).join(", ")}${parsed.anchors.length > 5 ? "..." : ""}`
+					: "No anchors found in document";
+
 			return {
 				reference,
 				valid: false,
-				error: `Anchor #${reference.anchorRef} not found in ${reference.docPath}`,
+				error: `Anchor #${reference.anchorRef} not found in ${reference.docPath}. ${available}`,
 			};
 		}
 	}

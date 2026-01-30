@@ -5,6 +5,12 @@ export type {
 	DocRefOptions,
 	ValidationResult,
 	ValidationReport,
+	// Markdown types
+	CodeExample,
+	DocAssertion,
+	DocSection,
+	ParsedDoc,
+	TableRow,
 } from "./src/types";
 export { DEFAULT_OPTIONS } from "./src/types";
 
@@ -32,3 +38,18 @@ export {
 	generateReport,
 	formatReport,
 } from "./src/reporter";
+
+// Markdown Parsing
+export {
+	slugify,
+	parseMarkdown,
+	parseMarkdownFile,
+	extractExamples,
+	extractAssertions,
+	parseStructuredExample,
+	parseTable,
+	extractTables,
+	hasAnchor,
+	getSection,
+	getSections,
+} from "./src/markdown";
