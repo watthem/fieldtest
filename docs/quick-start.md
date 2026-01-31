@@ -9,19 +9,19 @@ Install FieldTest using your preferred package manager:
 ::: code-group
 
 ```bash [npm]
-npm install @watthem/fieldtest
+npm install @fieldtest/core
 ```
 
 ```bash [pnpm]
-pnpm add @watthem/fieldtest
+pnpm add @fieldtest/core
 ```
 
 ```bash [yarn]
-yarn add @watthem/fieldtest
+yarn add @fieldtest/core
 ```
 
 ```bash [bun]
-bun add @watthem/fieldtest
+bun add @fieldtest/core
 ```
 
 :::
@@ -36,7 +36,7 @@ Let's start by creating a simple blog post schema. Create a new file called `sch
 
 ```typescript
 // schemas.ts
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 export const blogPostSchema: StandardSchemaV1 = {
   version: '1',
@@ -77,7 +77,7 @@ Now let's validate some markdown content. Create a file called `validate.ts`:
 
 ```typescript
 // validate.ts
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from './schemas';
 
 // Load the schema (do this once, reuse the result)
@@ -167,7 +167,7 @@ Add validation to your Astro content collections:
 ```typescript
 // src/content/config.ts
 import { defineCollection, z } from 'astro:content';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../schemas';
 
 const schema = loadUserSchema(blogPostSchema);
@@ -207,7 +207,7 @@ Validate content during static generation:
 ```typescript
 // pages/blog/[slug].tsx or app/blog/[slug]/page.tsx
 import { GetStaticProps, GetStaticPaths } from 'next';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../../schemas';
 import fs from 'fs';
 import path from 'path';
@@ -252,7 +252,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 FieldTest includes pre-built schemas for common use cases:
 
 ```typescript
-import { getBuiltInSchema } from '@watthem/fieldtest';
+import { getBuiltInSchema } from '@fieldtest/core';
 
 // Use pre-built schemas
 const blogSchema = getBuiltInSchema('blog-post');
@@ -260,7 +260,7 @@ const docsSchema = getBuiltInSchema('documentation');
 const marketingSchema = getBuiltInSchema('marketing-copy');
 
 // List all available schemas
-import { listSchemas } from '@watthem/fieldtest';
+import { listSchemas } from '@fieldtest/core';
 console.log('Available schemas:', listSchemas());
 ```
 

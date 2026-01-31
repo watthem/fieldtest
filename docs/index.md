@@ -52,7 +52,7 @@ features:
 ## Quick Example
 
 ```typescript
-import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
+import { parseMarkdown, validateWithSchema, z } from '@fieldtest/core';
 
 // Define your schema using Zod (Standard Schema compliant)
 const blogSchema = z.object({
@@ -98,7 +98,7 @@ if ('issues' in result) {
 ```typescript
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { z } from '@watthem/fieldtest';
+import { z } from '@fieldtest/core';
 
 // Astro's built-in Zod works with FieldTest schemas
 const blog = defineCollection({
@@ -117,7 +117,7 @@ export const collections = { blog };
 ### Next.js
 ```typescript
 // Validate content at build time
-import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
+import { parseMarkdown, validateWithSchema, z } from '@fieldtest/core';
 import fs from 'fs';
 
 const postSchema = z.object({
@@ -141,7 +141,7 @@ export async function getStaticProps({ params }) {
 ### Universal
 ```typescript
 // Works with any framework or runtime
-import { parseMarkdown, validateWithSchema, z } from '@watthem/fieldtest';
+import { parseMarkdown, validateWithSchema, z } from '@fieldtest/core';
 
 const schema = z.object({ title: z.string() });
 const doc = parseMarkdown(markdown);

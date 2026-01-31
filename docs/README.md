@@ -106,13 +106,13 @@ FieldTest provides:
 ## 📦 Installation
 
 ```bash
-npm install @watthem/fieldtest
+npm install @fieldtest/core
 ```
 
 Or with pnpm:
 
 ```bash
-pnpm add @watthem/fieldtest
+pnpm add @fieldtest/core
 ```
 
 **Requirements:** Node.js 18+ and PNPM 8+
@@ -120,8 +120,8 @@ pnpm add @watthem/fieldtest
 ## 🚀 Quick Example
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 // Define schema
 const schema: StandardSchemaV1 = {

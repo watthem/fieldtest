@@ -2,7 +2,7 @@
 
 > **A validation toolkit for Markdown and Standard Schema — built for Astro, Next.js, and modern frameworks.**
 
-[![npm version](https://img.shields.io/npm/v/@watthem/fieldtest.svg)](https://www.npmjs.com/package/@watthem/fieldtest)
+[![npm version](https://img.shields.io/npm/v/@fieldtest/core.svg)](https://www.npmjs.com/package/@fieldtest/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![GitHub stars](https://img.shields.io/github/stars/watthem/fieldtest.svg?style=social)](https://github.com/watthem/fieldtest)
@@ -75,11 +75,11 @@ const [ok] = validate(createUser.requestBody!, { name: "Ada" });
 ### Installation
 
 ```bash
-npm install @watthem/fieldtest
+npm install @fieldtest/core
 # or
-pnpm add @watthem/fieldtest
+pnpm add @fieldtest/core
 # or 
-yarn add @watthem/fieldtest
+yarn add @fieldtest/core
 ```
 
 **Requirements:** Node.js 18+ | Works with any package manager
@@ -89,7 +89,7 @@ yarn add @watthem/fieldtest
 1. **Define your content schema:**
 
 ```typescript
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 const blogSchema: StandardSchemaV1 = {
   version: '1',
@@ -107,7 +107,7 @@ const blogSchema: StandardSchemaV1 = {
 2. **Validate your markdown content:**
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 
 const schema = loadUserSchema(blogSchema);
 
@@ -147,7 +147,7 @@ FieldTest works seamlessly with your favorite framework:
 ```typescript
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 
 const blog = defineCollection({
   type: 'content',
@@ -170,7 +170,7 @@ const blog = defineCollection({
 
 ```typescript
 // Validate content in getStaticProps, generateStaticParams, or API routes
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 import fs from 'fs';
 
 export async function generateStaticParams() {
@@ -194,7 +194,7 @@ export async function generateStaticParams() {
 
 ```typescript
 // Works with Remix, SvelteKit, Nuxt, Solid, and more!
-import { validateWithSchema } from '@watthem/fieldtest';
+import { validateWithSchema } from '@fieldtest/core';
 
 // Universal validation that works anywhere
 const isValid = validateWithSchema(content, schema).valid;
@@ -207,7 +207,7 @@ const isValid = validateWithSchema(content, schema).valid;
 Skip writing schemas for common use cases:
 
 ```typescript
-import { getBuiltInSchema } from '@watthem/fieldtest';
+import { getBuiltInSchema } from '@fieldtest/core';
 
 // Pre-built schemas for common content types
 const blogSchema = getBuiltInSchema('blog-post');
@@ -223,8 +223,8 @@ FieldTest includes custom **GritQL plugins** for Biome to help with migration an
 // biome.json
 {
   "plugins": [
-    "./node_modules/@watthem/fieldtest/grit-plugins/fieldtest-migration.grit",
-    "./node_modules/@watthem/fieldtest/grit-plugins/schema-usage.grit"
+    "./node_modules/@fieldtest/core/grit-plugins/fieldtest-migration.grit",
+    "./node_modules/@fieldtest/core/grit-plugins/schema-usage.grit"
   ]
 }
 ```
@@ -237,7 +237,7 @@ FieldTest includes custom **GritQL plugins** for Biome to help with migration an
 
 ```typescript
 // AI-powered content validation and generation
-import { MCPServer } from '@watthem/fieldtest/mcp';
+import { MCPServer } from '@fieldtest/core/mcp';
 
 const server = new MCPServer({
   schemas: [blogSchema, docsSchema],
@@ -290,14 +290,14 @@ Upgrading from FKit or legacy `@fieldtest/*` packages? We've got you covered:
 ```bash
 # Update package.json
 npm uninstall @fieldtest/core @fieldtest/validate @fieldtest/registry
-npm install @watthem/fieldtest
+npm install @fieldtest/core
 
 # Update imports (TypeScript/JavaScript)
 find . -name "*.ts" -o -name "*.tsx" -o -name "*.js" | xargs sed -i 's/@fieldtest\/[a-zA-Z-]*/@watthem\/fieldtest/g'
 find . -name "*.ts" -o -name "*.tsx" -o -name "*.js" | xargs sed -i 's/FkitDocument/FieldTestDocument/g'
 ```
 
-📝 [**Complete Migration Guide**](https://fieldtest.watthem.blog/migration) — Detailed migration steps and breaking changes
+📝 [**Complete Migration Guide**](https://docs.matthewhendricks.net/fieldtest/migration) — Detailed migration steps and breaking changes
 
 ## 🌍 Community & Support
 
@@ -329,8 +329,8 @@ FieldTest stands on the shoulders of giants:
 <div align="center">
   <p><strong>Ready to validate your content like a pro?</strong></p>
   <p>
-    <a href="https://fieldtest.watthem.blog/getting-started">Get Started</a> • 
-    <a href="https://fieldtest.watthem.blog/examples/">See Examples</a> •
+    <a href="https://docs.matthewhendricks.net/fieldtest/getting-started">Get Started</a> • 
+    <a href="https://docs.matthewhendricks.net/fieldtest/examples/">See Examples</a> •
     <a href="https://github.com/watthem/fieldtest">Star on GitHub</a>
   </p>
 </div>

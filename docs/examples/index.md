@@ -9,7 +9,7 @@ Explore real-world examples and patterns for using FieldTest with different fram
 The simplest use case - validating blog posts with frontmatter:
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 
 const blogSchema = {
   version: '1',
@@ -191,7 +191,7 @@ const multiLangSchema = {
 Validate large numbers of files efficiently:
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import fs from 'fs';
 import path from 'path';
 
@@ -268,7 +268,7 @@ Integrate with Vite, Webpack, or other build tools:
 ```typescript
 // vite-plugin-fieldtest.ts
 import type { Plugin } from 'vite';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 
 export function fieldTestPlugin(schemas: StandardSchemaV1[]): Plugin {
   const loadedSchemas = schemas.map(schema => ({
@@ -345,7 +345,7 @@ Test your schemas work correctly:
 ```typescript
 // schemas.test.ts
 import { describe, it, expect } from 'vitest';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../schemas';
 
 describe('Blog Post Schema', () => {

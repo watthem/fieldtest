@@ -1,27 +1,28 @@
 import { defineConfig } from "vitepress";
 
-const plausibleDomain =
-  process.env.PLAUSIBLE_DOMAIN || "fieldtest.matthewhendricks.net";
+const siteUrl = "https://docs.matthewhendricks.net";
+const base = "/fieldtest/";
+const plausibleDomain = process.env.PLAUSIBLE_DOMAIN || "docs.matthewhendricks.net";
 
 export default defineConfig({
   title: "FieldTest",
   description:
     "Framework-agnostic validation toolkit for Markdown and Standard Schema. Built for Astro, Next.js, and modern frameworks. Catch content errors at build time, not in production.",
-  base: "/",
+  base,
   lang: "en-US",
 
   head: [
     // Favicons and icons
     [
       "link",
-      { rel: "icon", type: "image/png", sizes: "32x32", href: "/icon.png" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: `${base}icon.png` },
     ],
     [
       "link",
-      { rel: "icon", type: "image/png", sizes: "16x16", href: "/icon.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: `${base}icon.png` },
     ],
-    ["link", { rel: "apple-touch-icon", sizes: "180x180", href: "/icon.png" }],
-    ["link", { rel: "manifest", href: "/manifest.json" }],
+    ["link", { rel: "apple-touch-icon", sizes: "180x180", href: `${base}icon.png` }],
+    ["link", { rel: "manifest", href: `${base}manifest.json` }],
 
     // SEO Meta Tags
     ["meta", { name: "theme-color", content: "#3c82f6" }],
@@ -69,13 +70,13 @@ export default defineConfig({
     ],
     [
       "meta",
-      { property: "og:url", content: "https://docs.matthewhendricks.net/" },
+      { property: "og:url", content: `${siteUrl}${base}` },
     ],
     [
       "meta",
       {
         property: "og:image",
-        content: "https://docs.matthewhendricks.net/hero.png",
+        content: `${siteUrl}${base}hero.png`,
       },
     ],
     ["meta", { property: "og:image:width", content: "1200" }],
@@ -111,7 +112,7 @@ export default defineConfig({
       "meta",
       {
         name: "twitter:image",
-        content: "https://docs.matthewhendricks.net/hero.png",
+        content: `${siteUrl}${base}hero.png`,
       },
     ],
     [
@@ -123,7 +124,7 @@ export default defineConfig({
     ],
 
     // Canonical URL
-    ["link", { rel: "canonical", href: "https://docs.matthewhendricks.net/" }],
+    ["link", { rel: "canonical", href: `${siteUrl}${base}` }],
 
     // DNS Prefetch & Preconnect for performance
     ["link", { rel: "dns-prefetch", href: "https://fonts.googleapis.com" }],
@@ -145,7 +146,7 @@ export default defineConfig({
         description:
           "Framework-agnostic validation toolkit for Markdown and Standard Schema. Built for Astro, Next.js, and modern frameworks.",
         url: "https://docs.matthewhendricks.net",
-        downloadUrl: "https://www.npmjs.com/package/@watthem/fieldtest",
+        downloadUrl: "https://www.npmjs.com/package/@fieldtest/core",
         softwareVersion: "1.0.1",
         author: {
           "@type": "Person",
@@ -244,7 +245,7 @@ export default defineConfig({
 
     socialLinks: [
       { icon: "github", link: "https://github.com/watthem/fieldtest" },
-      { icon: "npm", link: "https://www.npmjs.com/package/@watthem/fieldtest" },
+      { icon: "npm", link: "https://www.npmjs.com/package/@fieldtest/core" },
     ],
 
     search: {

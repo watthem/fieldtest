@@ -248,8 +248,8 @@ fields: {
 FieldTest implements Standard Schema for markdown validation:
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 // 1. Define schema
 const schema: StandardSchemaV1 = {
@@ -411,7 +411,7 @@ The `version` field allows the specification to evolve without breaking existing
 Here's a complete Standard Schema for a documentation page:
 
 ```typescript
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 export const docPageSchema: StandardSchemaV1 = {
   version: '1',

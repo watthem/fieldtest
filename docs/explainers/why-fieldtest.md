@@ -82,7 +82,7 @@ FieldTest provides a unified approach to content validation:
 Validate content at build time, not runtime:
 
 ```typescript
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 
 const schema = loadUserSchema(blogPostSchema);
 const result = validateWithSchema(content, schema);
@@ -116,15 +116,15 @@ Define once, use everywhere:
 export const blogPostSchema = { /* ... */ };
 
 // Use in Astro
-import { validateAstroContent } from '@watthem/fieldtest';
+import { validateAstroContent } from '@fieldtest/core';
 validateAstroContent(content, loadUserSchema(blogPostSchema));
 
 // Use in Next.js
-import { validateNextContent } from '@watthem/fieldtest';
+import { validateNextContent } from '@fieldtest/core';
 validateNextContent(content, loadUserSchema(blogPostSchema));
 
 // Use in CI
-import { validateWithSchema } from '@watthem/fieldtest';
+import { validateWithSchema } from '@fieldtest/core';
 validateWithSchema(content, loadUserSchema(blogPostSchema));
 ```
 
@@ -204,7 +204,7 @@ LLMs understand Standard Schema, enabling AI-assisted content creation:
 
 ```typescript
 // MCP integration for Claude/GPT
-import { validateWithSchema } from '@watthem/fieldtest';
+import { validateWithSchema } from '@fieldtest/core';
 
 const aiContent = await llm.generate({
   schema: blogPostSchema,

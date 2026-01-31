@@ -7,7 +7,7 @@
 Parses markdown content with frontmatter extraction.
 
 ```typescript
-import { parseMarkdown } from '@watthem/fieldtest';
+import { parseMarkdown } from '@fieldtest/core';
 
 const doc = parseMarkdown(`---
 title: "Hello World"
@@ -29,7 +29,7 @@ console.log(doc.body);        // "\nContent here.\n"
 Validates data against a Standard Schema (e.g., Zod schema).
 
 ```typescript
-import { validateWithSchema, z } from '@watthem/fieldtest';
+import { validateWithSchema, z } from '@fieldtest/core';
 
 const schema = z.object({
   title: z.string(),
@@ -63,7 +63,7 @@ const data = await validateWithSchema(schema, input, { throwOnError: true });
 Serializes frontmatter and body back into a markdown string.
 
 ```typescript
-import { serializeMarkdown } from '@watthem/fieldtest';
+import { serializeMarkdown } from '@fieldtest/core';
 
 const markdown = serializeMarkdown(
   { title: 'My Post', draft: false },
@@ -93,7 +93,7 @@ FieldTest re-exports Zod and provides additional validation helpers.
 The Zod library is re-exported for convenience:
 
 ```typescript
-import { z } from '@watthem/fieldtest';
+import { z } from '@fieldtest/core';
 
 const schema = z.object({
   title: z.string().min(1),
@@ -106,7 +106,7 @@ const schema = z.object({
 Synchronous validation that returns a tuple.
 
 ```typescript
-import { validate, z } from '@watthem/fieldtest';
+import { validate, z } from '@fieldtest/core';
 
 const schema = z.object({ name: z.string() });
 const [success, result] = validate(schema, { name: 'Alice' });
@@ -128,7 +128,7 @@ if (success) {
 Formats a Zod error into a human-readable string.
 
 ```typescript
-import { formatZodError, validate, z } from '@watthem/fieldtest';
+import { formatZodError, validate, z } from '@fieldtest/core';
 
 const [success, result] = validate(z.string(), 123);
 if (!success) {

@@ -17,7 +17,7 @@ Learn how to integrate FieldTest with Astro, Next.js, and other modern framework
 ### Installation
 
 ```bash
-pnpm add @watthem/fieldtest
+pnpm add @fieldtest/core
 ```
 
 ### Content Collections with Validation
@@ -28,8 +28,8 @@ Astro's content collections work perfectly with FieldTest:
 
 ```typescript
 import { defineCollection, z } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 // Define your FieldTest schema
 const blogPostSchema: StandardSchemaV1 = {
@@ -87,7 +87,7 @@ Create a validation script that runs during build:
 
 ```typescript
 import { getCollection } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@watthem/fieldtest';
+import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../src/schemas';
 
 async function validateContent() {
@@ -141,7 +141,7 @@ Validate content when generating dynamic pages:
 ```astro
 ---
 import { getCollection } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@watthem/fieldtest';
+import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../../schemas';
 
 export async function getStaticPaths() {
@@ -183,8 +183,8 @@ const { Content } = await post.render();
 **app/blog/[slug]/page.tsx:**
 
 ```typescript
-import { validateNextContent, loadUserSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { validateNextContent, loadUserSchema } from '@fieldtest/core';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -240,7 +240,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
 
 ```typescript
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { validateNextContent, loadUserSchema } from '@watthem/fieldtest';
+import { validateNextContent, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../../schemas';
 import fs from 'fs';
 import path from 'path';
@@ -305,7 +305,7 @@ Validate content in API endpoints:
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { validateNextContent, loadUserSchema } from '@watthem/fieldtest';
+import { validateNextContent, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../../../schemas';
 
 export async function POST(request: NextRequest) {
@@ -339,7 +339,7 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 import { json, LoaderFunction } from '@remix-run/node';
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '../schemas';
 
 export const loader: LoaderFunction = async ({ params }) => {
@@ -359,7 +359,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 ```typescript
 import type { Load } from '@sveltejs/kit';
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from '$lib/schemas';
 
 export const load: Load = async ({ params }) => {
@@ -382,7 +382,7 @@ export const load: Load = async ({ params }) => {
 
 ```typescript
 export default defineEventHandler(async (event) => {
-  const { validateWithSchema, loadUserSchema } = await import('@watthem/fieldtest');
+  const { validateWithSchema, loadUserSchema } = await import('@fieldtest/core');
   const { blogPostSchema } = await import('~/schemas');
   
   const slug = event.context.params.slug;
@@ -408,7 +408,7 @@ export default defineEventHandler(async (event) => {
 ### Development vs Production
 
 ```typescript
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -468,7 +468,7 @@ Catch errors early by validating during the build process, not at runtime.
 Combine FieldTest with TypeScript for maximum type safety:
 
 ```typescript
-import type { StandardSchemaV1, FieldTestDocument } from '@watthem/fieldtest';
+import type { StandardSchemaV1, FieldTestDocument } from '@fieldtest/core';
 
 const schema: StandardSchemaV1 = {
   // TypeScript ensures correct structure
@@ -484,8 +484,8 @@ const schema: StandardSchemaV1 = {
 
 ```typescript
 // lib/validation.ts
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 export function createValidator(schema: StandardSchemaV1) {
   const loadedSchema = loadUserSchema(schema);

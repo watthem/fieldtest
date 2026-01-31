@@ -91,7 +91,7 @@ const doc: OldDocumentType = parseMarkdown(content);
 
 ```typescript
 // ✅ Use unified package
-import { parseMarkdown, FieldTestDocument } from '@watthem/fieldtest';
+import { parseMarkdown, FieldTestDocument } from '@fieldtest/core';
 
 const doc: FieldTestDocument = parseMarkdown(content);
 ```

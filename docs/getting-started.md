@@ -5,13 +5,13 @@ Follow these steps to validate content with FieldTest's Standard Schema.
 ## 1. Install
 
 ```bash
-pnpm add @watthem/fieldtest
+pnpm add @fieldtest/core
 ```
 
 ## 2. Define a schema
 
 ```ts
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 export const blogPostSchema: StandardSchemaV1 = {
   version: '1',
@@ -28,7 +28,7 @@ export const blogPostSchema: StandardSchemaV1 = {
 ## 3. Load and validate
 
 ```ts
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from './schema';
 
 const schema = loadUserSchema(blogPostSchema);

@@ -17,7 +17,7 @@ Learn how to validate content using FieldTest's Standard Schema support.
 A Standard Schema defines the structure of your content. Here's a simple example:
 
 ```typescript
-import type { StandardSchemaV1 } from '@watthem/fieldtest';
+import type { StandardSchemaV1 } from '@fieldtest/core';
 
 export const blogPostSchema: StandardSchemaV1 = {
   version: '1',
@@ -93,7 +93,7 @@ Once you have a schema, validate your markdown content:
 ### Basic Validation
 
 ```typescript
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 import { blogPostSchema } from './schemas';
 
 // Load the schema
@@ -289,7 +289,7 @@ FieldTest includes a schema registry for managing reusable schemas.
 ### Registering Custom Schemas
 
 ```typescript
-import { registerSchema } from '@watthem/fieldtest';
+import { registerSchema } from '@fieldtest/core';
 
 // Register your schema
 registerSchema('my-custom-schema', {
@@ -301,7 +301,7 @@ registerSchema('my-custom-schema', {
 });
 
 // Later, retrieve it anywhere
-import { getBuiltInSchema, validateWithSchema } from '@watthem/fieldtest';
+import { getBuiltInSchema, validateWithSchema } from '@fieldtest/core';
 
 const schema = getBuiltInSchema('my-custom-schema');
 if (schema) {
@@ -312,7 +312,7 @@ if (schema) {
 ### Listing Available Schemas
 
 ```typescript
-import { listSchemas } from '@watthem/fieldtest';
+import { listSchemas } from '@fieldtest/core';
 
 const available = listSchemas();
 console.log('Available schemas:', available);
@@ -324,7 +324,7 @@ console.log('Available schemas:', available);
 FieldTest includes several built-in schemas:
 
 ```typescript
-import { getBuiltInSchema } from '@watthem/fieldtest';
+import { getBuiltInSchema } from '@fieldtest/core';
 
 // Blog post schema
 const blogSchema = getBuiltInSchema('blog-post');
@@ -345,7 +345,7 @@ const apiSchema = getBuiltInSchema('api-guide');
 Extend existing schemas by merging them:
 
 ```typescript
-import { mergeSchemas, getBuiltInSchema } from '@watthem/fieldtest';
+import { mergeSchemas, getBuiltInSchema } from '@fieldtest/core';
 
 const baseSchema = getBuiltInSchema('blog-post');
 
@@ -388,7 +388,7 @@ Validate multiple files efficiently:
 ```typescript
 import fs from 'fs';
 import path from 'path';
-import { loadUserSchema, validateWithSchema } from '@watthem/fieldtest';
+import { loadUserSchema, validateWithSchema } from '@fieldtest/core';
 
 const schema = loadUserSchema(mySchema);
 const contentDir = './content/posts';
@@ -460,7 +460,7 @@ jobs:
 **scripts/validate.js:**
 
 ```javascript
-import { validateWithSchema, loadUserSchema } from '@watthem/fieldtest';
+import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
 import { blogPostSchema } from './schemas.js';
 import fs from 'fs';
 import path from 'path';
