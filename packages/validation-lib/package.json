@@ -1,6 +1,6 @@
 {
   "name": "@fieldtest/validation-lib",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reusable TypeScript validation library using Zod schemas",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -43,7 +43,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@fieldtest/shared": "workspace:*",
+    "@fieldtest/shared": "^1.0.2",
     "zod": "^3.22.4",
     "commander": "^12.0.0"
   },

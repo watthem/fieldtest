@@ -1,6 +1,6 @@
 {
 	"name": "@fieldtest/doc-ref",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Doc-driven testing validation - ensure tests reference documentation and those references are valid",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",

@@ -1,6 +1,6 @@
 {
   "name": "@fieldtest/validate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Validation utilities and pre-built schemas for the FieldTest toolkit",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -59,7 +59,7 @@
     "vitest": "^0.34.4"
   },
   "dependencies": {
-    "@fieldtest/core": "workspace:^",
+    "@fieldtest/core": "^1.0.2",
     "zod": "^3.22.4"
   }
 }

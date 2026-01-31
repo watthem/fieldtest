@@ -1,6 +1,6 @@
 {
   "name": "@fieldtest/openapi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "OpenAPI helpers for FieldTest (OpenAPI -> Zod).",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

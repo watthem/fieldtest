@@ -14,6 +14,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.2.5
         version: 2.2.5
+      '@fieldtest/core':
+        specifier: workspace:*
+        version: link:packages/core
       turbo:
         specifier: ^2.1.0
         version: 2.7.4
@@ -125,7 +128,7 @@ importers:
     dependencies:
       '@fieldtest/core':
         specifier: workspace:^
-        version: link:../..
+        version: link:../core
       '@fieldtest/validate':
         specifier: workspace:^
         version: link:../validate
@@ -184,7 +187,7 @@ importers:
     dependencies:
       '@fieldtest/core':
         specifier: workspace:^
-        version: link:../..
+        version: link:../core
       zod:
         specifier: ^3.22.4
         version: 3.25.76
