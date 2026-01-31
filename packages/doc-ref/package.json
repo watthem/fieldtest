@@ -1,0 +1,81 @@
+{
+	"name": "@fieldtest/doc-ref",
+	"version": "0.1.0",
+	"description": "Doc-driven testing tool with executable specifications support - Concordion-style testing for TypeScript",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./vitest": {
+			"types": "./dist/vitest.d.ts",
+			"import": "./dist/vitest.mjs",
+			"require": "./dist/vitest.js"
+		},
+		"./executable": {
+			"types": "./dist/executable.d.ts",
+			"import": "./dist/executable.mjs",
+			"require": "./dist/executable.js"
+		}
+	},
+	"sideEffects": false,
+	"files": ["dist/**", "README.md", "CHANGELOG.md"],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"clean": "rimraf dist",
+		"lint": "eslint src --ext .ts",
+		"test": "vitest run"
+	},
+	"keywords": [
+		"fieldtest",
+		"doc-ref",
+		"executable-specifications",
+		"concordion",
+		"doc-driven-testing",
+		"specification-by-example",
+		"markdown",
+		"testing",
+		"typescript"
+	],
+	"homepage": "https://github.com/watthem/fieldtest/tree/main/packages/doc-ref",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/watthem/fieldtest.git",
+		"directory": "packages/doc-ref"
+	},
+	"bugs": {
+		"url": "https://github.com/watthem/fieldtest/issues"
+	},
+	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"@types/node": "^18.17.15",
+		"eslint": "^8.49.0",
+		"rimraf": "^5.0.0",
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2",
+		"vitest": "^0.34.4"
+	},
+	"dependencies": {
+		"gray-matter": "^4.0.3"
+	},
+	"peerDependencies": {
+		"vitest": ">=0.34.0"
+	},
+	"peerDependenciesMeta": {
+		"vitest": {
+			"optional": true
+		}
+	}
+}
