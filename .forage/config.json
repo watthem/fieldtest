@@ -1,0 +1,28 @@
+{
+  "namespace": "fieldtest",
+  "owner": "watthem",
+  "pipelines": {
+    "dev": {
+      "enabled": true,
+      "item_type": "DEV",
+      "initial_stage": "draft",
+      "stages": [
+        "draft",
+        "research",
+        "design",
+        "build",
+        "publish",
+        "deploy",
+        "seed",
+        "test",
+        "review",
+        "done"
+      ],
+      "terminal_stages": [
+        "done",
+        "blocked"
+      ]
+    }
+  },
+  "ops": {}
+}
