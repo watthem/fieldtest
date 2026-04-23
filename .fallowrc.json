@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "packages/*/src/index.ts",
+    "packages/*/index.ts",
+    "packages/*/src/cli.ts",
+    "packages/*/vitest.config.ts",
+    "packages/*/tsup.config.ts",
+    "scripts/*.mjs"
+  ],
+  "ignorePatterns": ["node_modules/**", "dist/**", ".turbo/**", "coverage/**", ".forage/**"]
+}
