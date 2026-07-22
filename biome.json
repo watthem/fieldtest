@@ -7,14 +7,15 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "node_modules",
-      "dist",
-      "build",
-      ".turbo",
-      "coverage",
-      "*.config.js",
-      "pnpm-lock.yaml"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/.turbo",
+      "!**/coverage",
+      "!**/*.config.js",
+      "!**/pnpm-lock.yaml"
     ]
   },
   "formatter": {
@@ -41,9 +42,5 @@
         "organizeImports": "on"
       }
     }
-  },
-  "plugins": [
-    "./grit-plugins/fieldtest-migration.grit",
-    "./grit-plugins/schema-usage.grit"
-  ]
+  }
 }

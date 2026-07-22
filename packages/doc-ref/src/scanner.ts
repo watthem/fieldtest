@@ -130,8 +130,11 @@ export function scanTestFile(filePath: string): DocReference[] {
 
 	// Scan with DOC: comment pattern (highest priority)
 	DOC_COMMENT_PATTERN.lastIndex = 0;
-	let match: RegExpExecArray | null;
-	while ((match = DOC_COMMENT_PATTERN.exec(content)) !== null) {
+	for (
+		let match = DOC_COMMENT_PATTERN.exec(content);
+		match !== null;
+		match = DOC_COMMENT_PATTERN.exec(content)
+	) {
 		addRef({
 			testFile: filePath,
 			docPath: match[1],
@@ -141,7 +144,11 @@ export function scanTestFile(filePath: string): DocReference[] {
 
 	// Scan with line reference pattern
 	LINE_REF_PATTERN.lastIndex = 0;
-	while ((match = LINE_REF_PATTERN.exec(content)) !== null) {
+	for (
+		let match = LINE_REF_PATTERN.exec(content);
+		match !== null;
+		match = LINE_REF_PATTERN.exec(content)
+	) {
 		const [fullMatch, docPath, , lineStart, lineEnd] = match;
 		const ref: DocReference = {
 			testFile: filePath,
@@ -161,7 +168,11 @@ export function scanTestFile(filePath: string): DocReference[] {
 
 	// Scan with anchor reference pattern
 	ANCHOR_REF_PATTERN.lastIndex = 0;
-	while ((match = ANCHOR_REF_PATTERN.exec(content)) !== null) {
+	for (
+		let match = ANCHOR_REF_PATTERN.exec(content);
+		match !== null;
+		match = ANCHOR_REF_PATTERN.exec(content)
+	) {
 		const [fullMatch, docPath, , anchor] = match;
 		addRef({
 			testFile: filePath,
@@ -173,7 +184,11 @@ export function scanTestFile(filePath: string): DocReference[] {
 
 	// Scan with parenthesized path pattern
 	PAREN_PATH_PATTERN.lastIndex = 0;
-	while ((match = PAREN_PATH_PATTERN.exec(content)) !== null) {
+	for (
+		let match = PAREN_PATH_PATTERN.exec(content);
+		match !== null;
+		match = PAREN_PATH_PATTERN.exec(content)
+	) {
 		addRef({
 			testFile: filePath,
 			docPath: match[1],

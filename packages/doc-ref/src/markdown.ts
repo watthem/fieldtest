@@ -67,8 +67,11 @@ export function extractExamples(content: string): CodeExample[] {
 	const examples: CodeExample[] = [];
 	const codeBlockRegex = /```(\w+)?(?::([^\n]+))?\n([\s\S]*?)```/g;
 
-	let match: RegExpExecArray | null;
-	while ((match = codeBlockRegex.exec(content)) !== null) {
+	for (
+		let match = codeBlockRegex.exec(content);
+		match !== null;
+		match = codeBlockRegex.exec(content)
+	) {
 		const [, lang, meta, code] = match;
 		const example: CodeExample = {
 			lang: lang || "text",
@@ -508,9 +511,11 @@ export function extractTables(content: string): TableRow[][] {
 
 	// Match table blocks (lines starting with |)
 	const tableRegex = /(?:^|\n)((?:\|[^\n]+\|\n?)+)/g;
-	let match: RegExpExecArray | null;
-
-	while ((match = tableRegex.exec(content)) !== null) {
+	for (
+		let match = tableRegex.exec(content);
+		match !== null;
+		match = tableRegex.exec(content)
+	) {
 		const tableContent = match[1];
 		const parsed = parseTable(tableContent);
 		if (parsed.length > 0) {

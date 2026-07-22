@@ -122,9 +122,11 @@ function extractCodeBlockFunctions(section: DocSection): DocPromise[] {
 
 		// Match function calls like: registerSchema(...), validateSchema(...)
 		const callPattern = /\b(\w+)\s*\(/g;
-		let match: RegExpExecArray | null;
-
-		while ((match = callPattern.exec(example.code)) !== null) {
+		for (
+			let match = callPattern.exec(example.code);
+			match !== null;
+			match = callPattern.exec(example.code)
+		) {
 			const name = match[1];
 
 			// Filter out common keywords and built-ins
@@ -235,9 +237,11 @@ function extractFromSection(
 
 	for (const pattern of allPatterns) {
 		pattern.regex.lastIndex = 0;
-		let match: RegExpExecArray | null;
-
-		while ((match = pattern.regex.exec(section.content)) !== null) {
+		for (
+			let match = pattern.regex.exec(section.content);
+			match !== null;
+			match = pattern.regex.exec(section.content)
+		) {
 			addPromise({
 				type: pattern.type,
 				identifier: pattern.getIdentifier(match),
@@ -313,26 +317,41 @@ function scanFileForDefinitions(filePath: string): Set<string> {
 
 	// Function declarations: function foo() / async function foo()
 	const funcDecl = /\bfunction\s+(\w+)/g;
-	let match: RegExpExecArray | null;
-	while ((match = funcDecl.exec(content)) !== null) {
+	for (
+		let match = funcDecl.exec(content);
+		match !== null;
+		match = funcDecl.exec(content)
+	) {
 		definitions.add(match[1]);
 	}
 
 	// Arrow functions / const assignments: const foo = / export const foo =
 	const constDecl = /\b(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=/g;
-	while ((match = constDecl.exec(content)) !== null) {
+	for (
+		let match = constDecl.exec(content);
+		match !== null;
+		match = constDecl.exec(content)
+	) {
 		definitions.add(match[1]);
 	}
 
 	// Class declarations
 	const classDecl = /\bclass\s+(\w+)/g;
-	while ((match = classDecl.exec(content)) !== null) {
+	for (
+		let match = classDecl.exec(content);
+		match !== null;
+		match = classDecl.exec(content)
+	) {
 		definitions.add(match[1]);
 	}
 
 	// Interface/type declarations (TypeScript)
 	const typeDecl = /\b(?:interface|type)\s+(\w+)/g;
-	while ((match = typeDecl.exec(content)) !== null) {
+	for (
+		let match = typeDecl.exec(content);
+		match !== null;
+		match = typeDecl.exec(content)
+	) {
 		definitions.add(match[1]);
 	}
 
@@ -363,8 +382,11 @@ export async function scanExports(
 
 			// Named exports: export { foo, bar }
 			const namedExport = /export\s*\{([^}]+)\}/g;
-			let match: RegExpExecArray | null;
-			while ((match = namedExport.exec(content)) !== null) {
+			for (
+				let match = namedExport.exec(content);
+				match !== null;
+				match = namedExport.exec(content)
+			) {
 				const names = match[1].split(",").map((n) => {
 					// Handle "foo as bar" renames
 					const parts = n.trim().split(/\s+as\s+/);
@@ -378,7 +400,11 @@ export async function scanExports(
 			// Direct exports: export const foo, export function foo, export class foo
 			const directExport =
 				/export\s+(?:const|let|var|function|class|interface|type)\s+(\w+)/g;
-			while ((match = directExport.exec(content)) !== null) {
+			for (
+				let match = directExport.exec(content);
+				match !== null;
+				match = directExport.exec(content)
+			) {
 				exports.add(match[1]);
 			}
 

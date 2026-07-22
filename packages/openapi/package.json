@@ -32,7 +32,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "eslint src/**/*.ts",
+    "lint": "biome lint src",
     "test": "vitest run --passWithNoTests",
     "clean": "rimraf dist"
   },
