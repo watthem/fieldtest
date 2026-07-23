@@ -7,7 +7,6 @@ import type {
 	DocRefOptions,
 	DocReference,
 	ValidationReport,
-	ValidationResult,
 } from "./types";
 import { DEFAULT_DEBT_OPTIONS, DEFAULT_OPTIONS } from "./types";
 import {

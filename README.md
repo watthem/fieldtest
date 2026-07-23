@@ -31,7 +31,6 @@ fieldtest/
 │   └── integrations/
 │       └── mcp/
 │           └── fieldtest-mcp-server/  # MCP server for AI workflows
-├── grit-plugins/                # Biome GritQL linting plugins
 ├── docs/                        # Documentation
 │   ├── guides/                  # How-to guides
 │   ├── reference/               # API reference
@@ -49,7 +48,6 @@ fieldtest/
 - OpenAPI helpers
 - Markdown parsing + serialization
 - MCP server for AI workflows
-- Biome plugins for linting/migration
 
 ## OpenAPI Quickstart
 

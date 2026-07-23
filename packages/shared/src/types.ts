@@ -10,7 +10,6 @@ export interface MetricResult {
 	passed: boolean;
 	message?: string;
 }
-import { z } from "zod";
 
 /**
  * Issue type for validation results

@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { parseMarkdown, validateWithSchema } from "@fieldtest/core";
 
 async function runExample(
@@ -18,7 +18,7 @@ async function runExample(
 		schema[exportName] ||
 		Object.values(schema).find((s: any) => s && s["~standard"]);
 	if (!validator)
-		throw new Error("No StandardSchema validator found in " + schemaModule);
+		throw new Error(`No StandardSchema validator found in ${schemaModule}`);
 
 	console.log(`\n✅ Validating: ${fullPath}`);
 	const result = await validateWithSchema(validator, parsed.frontmatter);

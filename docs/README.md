@@ -35,7 +35,6 @@ Conceptual articles to deepen your understanding:
 ## 🚀 Quick Links
 
 - [Examples](../packages/examples/) — Real-world use cases
-- [Biome Plugins](../grit-plugins/README.md) — Custom linting rules
 - [Changelog](../CHANGELOG.md) — Version history and changes
 
 ## 🗂️ Documentation Structure
@@ -84,7 +83,6 @@ docs/
 ## 🔧 Tools & Integrations
 
 - **[MCP Server](../packages/integrations/mcp/fieldtest-mcp-server/)** — AI-powered content validation
-- **[Biome Plugins](../grit-plugins/)** — Custom linting rules for migration and best practices
 
 ## 🌟 Features
 
@@ -95,7 +93,6 @@ FieldTest provides:
 - ✅ **Schema registry** for reusable validation rules
 - ✅ **Framework integrations** (Astro, Next.js, and more)
 - ✅ **MCP integration** for AI workflows
-- ✅ **Biome plugins** for linting and migration
 
 ## 💬 Community & Support
 

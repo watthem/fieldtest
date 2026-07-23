@@ -1,6 +1,6 @@
-import { execSync } from "child_process";
-import * as fs from "fs";
-import * as path from "path";
+import { execSync } from "node:child_process";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 const examples = fs.readdirSync(".").filter((f) => f.endsWith(".example.ts"));
 let passed = 0,

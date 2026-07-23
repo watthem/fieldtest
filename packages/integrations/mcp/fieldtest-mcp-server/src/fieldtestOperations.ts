@@ -1,10 +1,9 @@
-import path from "path";
+import path from "node:path";
 import {
-        FieldTestDocument,
         parseMarkdown,
         serializeMarkdown,
 } from "@fieldtest/core"; // Assuming FieldTestDocument is a relevant type
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 import { shouldExcludeFile } from "@fieldtest/shared";
 
 // This structure reflects the user's info: schema['~standard'].validate
@@ -28,7 +27,7 @@ const DEFAULT_STANDARD_SCHEMA_DEF = {
 };
 
 const DEFAULT_FIELDTEST_SCHEMA = {
-	["~standard"]: {
+	'~standard': {
 		// This is a placeholder validate function based on the DEFAULT_STANDARD_SCHEMA_DEF.
 		// In a real scenario, this would be an instance of a validator (e.g., from @fieldtest/validate based on a loaded schema)
 		validate: (data: any) => {
@@ -345,14 +344,14 @@ export function isStale(frontmatter: any): boolean {
 		try {
 			const date = new Date(lastModifiedDateString);
 			// Check if date is valid
-			if (isNaN(date.getTime())) {
+			if (Number.isNaN(date.getTime())) {
 				return false;
 			}
 			const NINETY_DAYS_AGO = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
 			if (date < NINETY_DAYS_AGO) {
 				return true;
 			}
-		} catch (e) {
+		} catch {
 			return false;
 		}
 	}

@@ -6,7 +6,7 @@
  *   doc-ref [project-dir] [--verbose] [--json] [--debt] [--include-inferred]
  */
 
-import { generateReport, formatReport, formatDebtReport } from "../index";
+import { generateReport, formatReport, } from "../index";
 
 interface CliOptions {
 	projectDir: string;

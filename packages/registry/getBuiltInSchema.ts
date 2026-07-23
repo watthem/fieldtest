@@ -57,7 +57,7 @@ const noteSchema: StandardSchemaV1 = {
 			// Validate date if present
 			if (obj.date !== undefined) {
 				const date = new Date(String(obj.date));
-				if (isNaN(date.getTime())) {
+				if (Number.isNaN(date.getTime())) {
 					issues.push({
 						path: ["date"],
 						message: "Date must be a valid date string",
@@ -116,7 +116,7 @@ const blogPostSchema: StandardSchemaV1 = {
 			// Validate date
 			if (obj.date) {
 				const date = new Date(String(obj.date));
-				if (isNaN(date.getTime())) {
+				if (Number.isNaN(date.getTime())) {
 					issues.push({
 						path: ["date"],
 						message: "Date must be a valid date string",

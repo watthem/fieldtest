@@ -9,17 +9,14 @@
  * - Summarizing all notes via a prompt
  */
 
-import path from "path";
+import path from "node:path";
 import {
 	CallToolRequestSchema,
 	type GetPromptRequest,
 	GetPromptRequestSchema,
-	GetPromptResponse,
 	ListPromptsRequestSchema,
 	ListResourcesRequestSchema,
-	ListResourcesResponse,
 	ListToolsRequestSchema,
-	ListToolsResponse,
 	type ReadResourceRequest,
 	ReadResourceRequestSchema,
 	Server,
@@ -317,7 +314,7 @@ server.setRequestHandler(
 						const validation =
 							await fieldtestOps.validateFrontmatter(frontmatter);
 
-						operationsLog += `  Validation: ${validation.isValid ? "Valid" : "Invalid (" + (validation.errors?.join(", ") || "unknown error") + ")"}\n`;
+						operationsLog += `  Validation: ${validation.isValid ? "Valid" : `Invalid (${validation.errors?.join(", ") || "unknown error"})`}\n`;
 
 						let frontmatterUpdates: any = {};
 						let newPath = currentPath;

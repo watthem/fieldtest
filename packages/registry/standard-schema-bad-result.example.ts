@@ -6,7 +6,7 @@ const badResultSchema: StandardSchemaV1 = {
 	"~standard": {
 		version: 1,
 		vendor: "fieldtest-bad-result",
-		validate(value) {
+		validate(_value) {
 			// Always returns an empty object, which is not spec-compliant
 			return {} as any;
 		},

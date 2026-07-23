@@ -27,7 +27,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { describe, it, expect, beforeAll } from "vitest";
 import type { DocSection, CodeExample, DocAssertion, TableRow } from "./types";
-import { parseMarkdown, parseTable, extractTables } from "./markdown";
+import { parseMarkdown, extractTables } from "./markdown";
 
 // ============================================================================
 // Types
@@ -385,7 +385,7 @@ export function testAssertions(
 	}
 
 	describe(`assertions from ${spec.title}`, () => {
-		spec.assertions.forEach((assertion, i) => {
+		spec.assertions.forEach((assertion) => {
 			it(`${assertion.keyword || assertion.type}: ${assertion.text}`, () => {
 				const handled = testFn(assertion);
 				if (handled === false) {

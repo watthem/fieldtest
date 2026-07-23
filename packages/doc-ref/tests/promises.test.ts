@@ -7,7 +7,6 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import {
 	extractPromisesFromDoc,
-	extractPromises,
 	scanExports,
 	scanSourceDefinitions,
 	verifyPromise,
@@ -15,9 +14,6 @@ import {
 } from "../src/promises";
 import { parseMarkdown } from "../src/markdown";
 import type { DocPromise } from "../src/types";
-
-// Test fixtures directory
-const FIXTURES_DIR = path.join(__dirname, "fixtures", "debt");
 
 describe("Promise Extraction", () => {
 	describe("extractPromisesFromDoc", () => {

@@ -5,12 +5,8 @@
  * the documented API in docs/reference/api.md
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import { specSection, linkedDescribe, linkedIt, type LoadedSpec } from '@fieldtest/doc-ref/vitest';
+import { describe, it, expect, } from 'vitest';
 import { parseMarkdown, validateWithSchema, serializeMarkdown, z, validate, formatZodError } from '../src';
-
-// Set docs root relative to this test file
-const DOCS_ROOT = '../../../docs';
 
 describe('Core API - docs/reference/api.md', () => {
   // ==========================================================================

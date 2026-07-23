@@ -20,7 +20,6 @@ import type {
 	PromiseConfidence,
 	PromiseFulfillment,
 	PromiseType,
-	VerificationMethod,
 } from "./types";
 import { DEFAULT_DEBT_OPTIONS, DEFAULT_OPTIONS } from "./types";
 import { parseMarkdownFile } from "./markdown";

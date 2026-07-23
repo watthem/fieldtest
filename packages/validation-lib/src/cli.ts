@@ -6,8 +6,8 @@
  * Command-line interface for validating content using schemas from our validation library
  */
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { scanSite } from "@docs-score/core";
 import { Command } from "commander";
 import { z } from "zod";

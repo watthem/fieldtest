@@ -1,6 +1,6 @@
-import * as path from "path";
+import * as path from "node:path";
 import type { StandardSchemaV1 } from "@fieldtest/core";
-import * as fs from "fs/promises";
+import * as fs from "node:fs/promises";
 
 /**
  * Default config file name
