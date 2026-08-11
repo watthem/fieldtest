@@ -1,6 +1,6 @@
 ---
-name: forage-ops
-description: Inspect Forage control-plane health, indexes, ledgers, and skill drift.
+name: "forage-ops"
+description: "Inspect Forage control-plane health, indexes, ledgers, and skill drift."
 user-invokable: true
 metadata:
   version: 2026.04.23

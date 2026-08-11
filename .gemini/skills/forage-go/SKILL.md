@@ -1,6 +1,6 @@
 ---
-name: forage-go
-description: Resume work in a Forage repo by reading ACT, active tickets, and git state.
+name: "forage-go"
+description: "Resume work in a Forage repo by reading ACT, active tickets, and git state."
 user-invokable: true
 metadata:
   version: 2026.04.23

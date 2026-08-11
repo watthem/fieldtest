@@ -1,6 +1,6 @@
 ---
-name: forage-feedback
-description: Score session quality across 4 dimensions after wrap-up.
+name: "forage-feedback"
+description: "Score session quality across 4 dimensions after wrap-up."
 user-invokable: true
 metadata:
   version: 2026.04.23

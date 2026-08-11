@@ -1,6 +1,6 @@
 ---
-name: forage-approve
-description: Review a completed ticket or handoff and record approval or requested changes.
+name: "forage-approve"
+description: "Review a completed ticket or handoff and record approval or requested changes."
 user-invokable: true
 metadata:
   version: 2026.04.23

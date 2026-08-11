@@ -1,6 +1,6 @@
 ---
-name: forage
-description: Show ONE next action from the active facts index. Entry point for all forage work.
+name: "forage"
+description: "Show ONE next action from the active facts index. Entry point for all forage work."
 user-invokable: true
 metadata:
   version: 2026.04.23

@@ -1,6 +1,6 @@
 ---
-name: forage-pr
-description: Publish completed work by checking scope, committing, pushing, and preparing a PR.
+name: "forage-pr"
+description: "Publish completed work by checking scope, committing, pushing, and preparing a PR."
 user-invokable: true
 metadata:
   version: 2026.04.23

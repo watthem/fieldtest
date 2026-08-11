@@ -1,6 +1,6 @@
 ---
-name: forage-next
-description: Advance a ticket to its next pipeline stage. Appends stage_changed event to ledger.
+name: "forage-next"
+description: "Advance a ticket to its next pipeline stage. Appends stage_changed event to ledger."
 user-invokable: true
 metadata:
   version: 2026.04.23

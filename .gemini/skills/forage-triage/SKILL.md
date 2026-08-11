@@ -1,6 +1,6 @@
 ---
-name: forage-triage
-description: Classify work as SELF/HUMAN/EXTERNAL after reading the dispatch board.
+name: "forage-triage"
+description: "Classify work as SELF/HUMAN/EXTERNAL after reading the dispatch board."
 user-invokable: true
 metadata:
   version: 2026.04.23

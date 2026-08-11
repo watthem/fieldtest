@@ -1,6 +1,6 @@
 ---
-name: forage-status
-description: Show all active tickets grouped by pipeline, or detail for one ticket.
+name: "forage-status"
+description: "Show all active tickets grouped by pipeline, or detail for one ticket."
 user-invokable: true
 metadata:
   version: 2026.04.23

@@ -1,6 +1,6 @@
 ---
-name: forage-new
-description: Create a new ticket in any pipeline. Emits initial fact and stage event to the ledger.
+name: "forage-new"
+description: "Create a new ticket in any pipeline. Emits initial fact and stage event to the ledger."
 user-invokable: true
 metadata:
   version: 2026.04.23

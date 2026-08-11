@@ -1,6 +1,6 @@
 ---
-name: forage-stage
-description: Set an explicit ticket stage and append a stage-history note.
+name: "forage-stage"
+description: "Set an explicit ticket stage and append a stage-history note."
 user-invokable: true
 metadata:
   version: 2026.04.23

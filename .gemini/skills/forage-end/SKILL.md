@@ -1,6 +1,6 @@
 ---
-name: forage-end
-description: Session wrap-up. Commit work, emit events, write FIN coordination packet.
+name: "forage-end"
+description: "Session wrap-up. Commit work, emit events, write FIN coordination packet."
 user-invokable: true
 metadata:
   version: 2026.04.23

@@ -1,6 +1,6 @@
 ---
-name: forage-focus
-description: Session start ritual. Read context, show what matters, get into flow.
+name: "forage-focus"
+description: "Session start ritual. Read context, show what matters, get into flow."
 user-invokable: true
 metadata:
   version: 2026.04.23
