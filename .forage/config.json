@@ -11,9 +11,6 @@
         "research",
         "design",
         "build",
-        "publish",
-        "deploy",
-        "seed",
         "test",
         "review",
         "done"
@@ -23,6 +20,5 @@
         "blocked"
       ]
     }
-  },
-  "ops": {}
+  }
 }

@@ -1,19 +1,14 @@
 ---
-id: "fieldtest.DEV-2026-02-001"
-title: "Initialize forage pipeline"
+id: fieldtest.DEV-2026-02-001
 type: DEV
 pipeline: dev
+title: "Initialize forage pipeline"
 stage: draft
 priority: P2
-owner: "watthem"
-created: "2026-02-09T00:00:00Z"
-updated: "2026-02-09T00:00:00Z"
-labels: ["onboarding", "forage-init"]
-components: []
-branch: null
-pr: null
-deploy_url: null
-blocked_by: null
+created: 2026-02-09T00:00:00Z
+updated: 2026-02-09T00:00:00Z
+source: migrated from pre-v0.1 schema (forage.DEV-2026-08-039)
+assignee: "watthem"
 ---
 
 # Initialize forage pipeline
@@ -33,3 +28,7 @@ Review repo state, identify immediate next actions, and advance through draft st
 ## Comments
 
 <!-- Stage comments are appended below as the ticket progresses -->
+
+## Legacy fields (migrated from pre-v0.1 schema)
+
+- labels: ["onboarding", "forage-init"]

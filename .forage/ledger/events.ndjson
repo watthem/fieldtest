@@ -1,0 +1,2 @@
+{"event_type":"stage_changed","ticket_id":"fieldtest.DEV-2026-02-001","timestamp":"2026-08-12T04:30:11Z","payload":{"from":null,"to":"draft"}}
+{"event_type":"stage_changed","ticket_id":"fieldtest.DEV-2026-02-002","timestamp":"2026-08-12T04:30:11Z","payload":{"from":null,"to":"draft"}}

@@ -1,0 +1,180 @@
+{
+    "protocol_version": "0.1",
+    "description": "Agent write interface for the Forage CQRS filesystem. Tools append to the ledger (source of truth) and rebuild indexes (materialized views). Skills declare which tools they use via metadata.reads/writes.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "emit_validated_fact",
+          "description": "Propose a new atomic fact about the system state. Appends to ledger/facts.ndjson (the fact) and ledger/events.ndjson (fact_asserted event), then rebuilds index/active_facts.json. Agents can only propose 'agent_provisional' or 'system_high_candidate' facts. Do not use for narrative logging.",
+          "x-writes": ["ledger/facts.ndjson", "ledger/events.ndjson", "index/active_facts.json"],
+          "x-event-type": "fact_asserted",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ticket_id", "facts"],
+            "properties": {
+              "ticket_id": {
+                "type": "string",
+                "description": "Forage ticket identifier (e.g., forage.DEV-2026-02-001).",
+                "pattern": "^[A-Za-z0-9_.-]{3,128}$"
+              },
+              "facts": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["claim", "authority", "scope"],
+                  "properties": {
+                    "claim": {
+                      "type": "string",
+                      "description": "Atomic, falsifiable claim. No hedging (e.g., 'I think', 'maybe').",
+                      "minLength": 8,
+                      "maxLength": 240
+                    },
+                    "authority": {
+                      "type": "string",
+                      "enum": ["agent_provisional", "system_high_candidate"]
+                    },
+                    "scope": {
+                      "type": "string",
+                      "description": "Specific file, module, or environment this applies to."
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "proof": {
+                      "type": "object",
+                      "description": "Required if authority is system_high_candidate.",
+                      "properties": {
+                        "kind": { "type": "string", "enum": ["tool_result", "command_exit", "url_probe", "file_diff", "test_report"] },
+                        "ref": { "type": "string" }
+                      },
+                      "required": ["kind", "ref"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "supersede_fact",
+          "description": "Declare that an older fact is no longer active and is replaced by new facts. Appends fact_superseded event to ledger/events.ndjson, appends replacement facts to ledger/facts.ndjson, then rebuilds index/active_facts.json. Used to correct mistakes or update provisional facts.",
+          "x-writes": ["ledger/facts.ndjson", "ledger/events.ndjson", "index/active_facts.json"],
+          "x-event-type": "fact_superseded",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ticket_id", "target_fact_id", "replacement_facts", "reason"],
+            "properties": {
+              "ticket_id": { "type": "string" },
+              "target_fact_id": { "type": "string", "pattern": "^fact_[A-Za-z0-9_-]{6,64}$" },
+              "reason": { "type": "string", "maxLength": 240 },
+              "replacement_facts": {
+                "type": "array",
+                "description": "Array of new fact proposals conforming to the emit_validated_fact schema.",
+                "items": {
+                  "type": "object",
+                  "required": ["claim", "authority", "scope"],
+                  "properties": {
+                    "claim": { "type": "string", "minLength": 8, "maxLength": 240 },
+                    "authority": { "type": "string", "enum": ["agent_provisional", "system_high_candidate"] },
+                    "scope": { "type": "string" },
+                    "tags": { "type": "array", "items": { "type": "string" } },
+                    "proof": {
+                      "type": "object",
+                      "properties": {
+                        "kind": { "type": "string", "enum": ["tool_result", "command_exit", "url_probe", "file_diff", "test_report"] },
+                        "ref": { "type": "string" }
+                      },
+                      "required": ["kind", "ref"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "revoke_fact",
+          "description": "Mark a fact as invalid without replacing it (e.g., a previous test pass was a false positive). Appends fact_revoked event to ledger/events.ndjson, then rebuilds index/active_facts.json.",
+          "x-writes": ["ledger/events.ndjson", "index/active_facts.json"],
+          "x-event-type": "fact_revoked",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ticket_id", "target_fact_id", "reason"],
+            "properties": {
+              "ticket_id": { "type": "string" },
+              "target_fact_id": { "type": "string", "pattern": "^fact_[A-Za-z0-9_-]{6,64}$" },
+              "reason": { "type": "string", "maxLength": 240 }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "set_stage",
+          "description": "Transition the ticket's pipeline stage. Appends stage_changed event to ledger/events.ndjson, updates tickets/<id>.md frontmatter, then rebuilds index/active_facts.json.",
+          "x-writes": ["ledger/events.ndjson", "tickets/<id>.md", "index/active_facts.json"],
+          "x-event-type": "stage_changed",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ticket_id", "stage"],
+            "properties": {
+              "ticket_id": { "type": "string" },
+              "stage": {
+                "type": "string",
+                "enum": ["draft", "research", "design", "build", "test", "review", "done", "blocked", "abandoned"]
+              },
+              "note": { "type": "string", "maxLength": 240 }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "attach_proof",
+          "description": "Attach or upgrade evidence for an existing fact. Appends proof_attached event to ledger/events.ndjson, updates the fact entry in ledger/facts.ndjson, then rebuilds index/active_facts.json. Used to graduate an agent_provisional fact to system_high_candidate.",
+          "x-writes": ["ledger/facts.ndjson", "ledger/events.ndjson", "index/active_facts.json"],
+          "x-event-type": "proof_attached",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ticket_id", "target_fact_id", "proof"],
+            "properties": {
+              "ticket_id": { "type": "string" },
+              "target_fact_id": { "type": "string", "pattern": "^fact_[A-Za-z0-9_-]{6,64}$" },
+              "proof": {
+                "type": "object",
+                "required": ["kind", "ref"],
+                "properties": {
+                  "kind": { "type": "string", "enum": ["tool_result", "command_exit", "url_probe", "file_diff", "test_report"] },
+                  "ref": { "type": "string" },
+                  "summary": { "type": "string", "maxLength": 240 }
+                }
+              },
+              "requested_upgrade": {
+                "type": "string",
+                "enum": ["none", "system_high"],
+                "default": "none"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
