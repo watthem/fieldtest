@@ -3,7 +3,7 @@ id: fieldtest.DEV-2026-02-001
 type: DEV
 pipeline: dev
 title: "Initialize forage pipeline"
-stage: draft
+stage: abandoned
 priority: P2
 created: 2026-02-09T00:00:00Z
 updated: 2026-02-09T00:00:00Z
@@ -32,3 +32,5 @@ Review repo state, identify immediate next actions, and advance through draft st
 ## Legacy fields (migrated from pre-v0.1 schema)
 
 - labels: ["onboarding", "forage-init"]
+
+- 2026-09-24: stage set to `abandoned`. Moot: Forage was retired on 2026-09-24, so there is no pipeline left to initialize.

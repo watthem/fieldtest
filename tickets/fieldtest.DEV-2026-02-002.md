@@ -9,6 +9,7 @@ created: 2026-02-09T09:25:00Z
 updated: 2026-02-09T09:25:00Z
 source: migrated from pre-v0.1 schema (forage.DEV-2026-08-039)
 assignee: "watthem"
+github_issue: "https://github.com/watthem/fieldtest/issues/5"
 ---
 
 # Merge fkit-cli functionality into @fieldtest/validation-lib
@@ -33,3 +34,5 @@ Consolidate overlapping CLI behavior into @fieldtest/validation-lib to reduce sp
 ## Legacy fields (migrated from pre-v0.1 schema)
 
 - labels: ["consolidation", "tooling"]
+
+- 2026-09-24: moved to GitHub https://github.com/watthem/fieldtest/issues/5; the issue is authoritative for status from here.
