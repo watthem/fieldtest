@@ -16,9 +16,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # pnpm must be installed before setup-node can cache its store.
+      # Its version comes from packageManager in package.json.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - uses: actions/setup-node@v4
         with:
