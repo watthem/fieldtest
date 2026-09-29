@@ -189,7 +189,7 @@ import { validateNextContent, loadUserSchema } from '@fieldtest/core';
 import type { StandardSchemaV1 } from '@fieldtest/core';
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
+import { parseDocument } from '@fieldtest/core'; // YAML only; never executes front matter
 
 const blogPostSchema: StandardSchemaV1 = {
   version: '1',
@@ -224,7 +224,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
     throw new Error(`Content validation failed: ${result.errors.map(e => e.message).join(', ')}`);
   }
   
-  const { data, content } = matter(fileContents);
+  const { frontmatter: data, body: content } = parseDocument(fileContents);
   
   return (
     <article>
@@ -277,7 +277,7 @@ export const getStaticProps: GetStaticProps<BlogPostProps> = async ({ params }) 
     throw new Error(`Invalid content in ${params!.slug}: ${result.errors.map(e => e.message).join(', ')}`);
   }
   
-  const { data, content } = matter(fileContents);
+  const { frontmatter: data, body: content } = parseDocument(fileContents);
   
   return {
     props: {
