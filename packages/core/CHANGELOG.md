@@ -21,7 +21,7 @@ A Markdown document is now checked as two kinds of data: front matter and a body
 ### Changed (breaking)
 
 - YAML 1.2: unquoted dates and `yes`/`no` stay strings.
-- Node 18.3 or later.
+- Node 20 or later.
 
 ## [1.0.3] - 2026-09-29
 
