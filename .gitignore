@@ -72,3 +72,9 @@ artifacts/
 
 # Local Netlify folder
 .netlify
+
+# Local AI notes (not committed)
+FEEDBACK.md
+INTERESTING.md
+TODO.md
+PROGRESS.md
