@@ -55,5 +55,8 @@
     "turbo": "^2.1.0",
     "typescript": "^5.3.0",
     "vitepress": "^1.6.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": []
   }
 }
