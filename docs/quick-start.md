@@ -1,5 +1,7 @@
 # Quick Start
 
+> **Written for FieldTest 1.x.** 2.0 replaced `parseMarkdown`, `validateWithSchema`, `validate`, and `formatZodError` with `parseDocument`, `check`, and `checkDocument`, and core no longer re-exports zod. See [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md) and the [API reference](/reference/api).
+
 Get up and running with FieldTest in less than 5 minutes! This guide covers installation, your first schema, and validating content.
 
 ## Installation

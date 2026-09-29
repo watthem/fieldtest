@@ -1,10 +1,8 @@
 /**
  * FieldTest Core Types
- *
- * Defines the fundamental types for the FieldTest SDK
  */
 
-// Use the Standard Schema V1 interface as defined by the spec: https://standardschema.dev/
+// The Standard Schema V1 interface, copied from https://standardschema.dev/ as the spec recommends.
 export interface StandardSchemaV1<Input = unknown, Output = Input> {
 	/** The Standard Schema properties. */
 	readonly "~standard": StandardSchemaV1.Props<Input, Output>;
@@ -75,22 +73,61 @@ export declare namespace StandardSchemaV1 {
 	>["output"];
 }
 
-/**
- * Represents a parsed markdown document with frontmatter
- */
-export interface FieldTestDocument {
-	/** The original raw markdown content */
-	raw: string;
-	/** Parsed frontmatter data */
-	frontmatter: any;
-	/** The main body content without frontmatter */
-	body: string;
+/** Where an issue came from. */
+export type IssueSource = "data" | "parse" | "frontmatter" | "outline" | "rule" | "tree";
+
+/** One problem found by FieldTest, in the same shape whatever produced it. */
+export interface Issue {
+	message: string;
+	/** Keys from the checked value's root to the offending field. */
+	path: (string | number)[];
+	severity: "error" | "warn";
+	source: IssueSource;
+	/** 1-based line in the file, when known. */
+	line?: number;
+	file?: string;
+	/** Name of the rule that produced the issue, for rule, tree, and preset issues. */
+	rule?: string;
+	/** A concrete fix, when there is an obvious one. */
+	hint?: string;
 }
 
-/**
- * Standard Schema validation options
- */
-export interface ValidationOptions {
-	/** Throw error on validation failure instead of returning result object */
+/** The result of every check: the value on success, the issues on failure. */
+export type Result<T> =
+	| { ok: true; value: T; issues: Issue[] }
+	| { ok: false; value?: undefined; issues: Issue[] };
+
+export interface CheckOptions {
+	/** Throw an Error listing the issues instead of returning `{ ok: false }`. */
 	throwOnError?: boolean;
+}
+
+/** The body of a Markdown document, reduced to elements a schema can check. */
+export interface Outline {
+	/** Lines in the body. */
+	lines: number;
+	/** Rough token count (characters / 4). */
+	approxTokens: number;
+	headings: { depth: number; text: string; line: number }[];
+	codeBlocks: { lang?: string; line: number }[];
+	links: { href: string; text: string; line: number; relative: boolean }[];
+	/** List items (bulleted or numbered). */
+	listItems: number;
+	tables: number;
+}
+
+/** A parsed Markdown file: front matter as data, body as text plus outline. */
+export interface Document {
+	path?: string;
+	raw: string;
+	/** Parsed YAML front matter; `{}` when there is none or it failed to parse. */
+	frontmatter: Record<string, unknown>;
+	body: string;
+	/** 1-based line where the body starts in the file. */
+	bodyLine: number;
+	outline: Outline;
+	/** Problems found while parsing (bad YAML, unsupported front-matter language). */
+	issues: Issue[];
+	/** 1-based line of each top-level front-matter key, for issue locations. */
+	keyLines: Record<string, number>;
 }

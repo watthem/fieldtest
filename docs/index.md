@@ -49,6 +49,8 @@ features:
     details: Works out of the box with sensible defaults. Customize when you need it, but don't worry about complex setup.
 ---
 
+> **Written for FieldTest 1.x.** 2.0 replaced `parseMarkdown`, `validateWithSchema`, `validate`, and `formatZodError` with `parseDocument`, `check`, and `checkDocument`, and core no longer re-exports zod. See [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md) and the [API reference](/reference/api).
+
 ## Quick Example
 
 ```typescript

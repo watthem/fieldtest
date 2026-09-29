@@ -1,5 +1,5 @@
 export * from "./types";
-export * from "./parseMarkdown";
-export * from "./serializeMarkdown";
-export * from "./schemaUtils";
-export * from "@fieldtest/validation-lib";
+export { check, formatIssues, hasErrors, toIssues } from "./check";
+export { parseDocument, serializeMarkdown } from "./parseDocument";
+export { buildOutline } from "./outline";
+export { checkDocument, readDocument, relativeLinksResolve, type DocumentChecks, type Rule } from "./checkDocument";

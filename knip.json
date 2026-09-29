@@ -17,19 +17,11 @@
       "project": ["src/**/*.ts", "tests/**/*.ts", "*.ts"]
     },
     "packages/registry": {
-      "entry": ["index.ts", "src/index.ts", "run-examples.ts", "tsup.config.ts"],
+      "entry": ["src/index.ts", "src/cli.ts", "tsup.config.ts"],
       "project": ["src/**/*.ts", "*.ts"]
     },
     "packages/shared": {
       "entry": ["src/index.ts", "tsup.config.ts"],
-      "project": ["src/**/*.ts", "*.ts"]
-    },
-    "packages/validate": {
-      "entry": ["index.ts", "src/validateMarkdownWithSchema.ts", "tsup.config.ts"],
-      "project": ["src/**/*.ts", "*.ts"]
-    },
-    "packages/validation-lib": {
-      "entry": ["src/index.ts", "src/cli.ts", "tsup.config.ts"],
       "project": ["src/**/*.ts", "*.ts"]
     }
   },

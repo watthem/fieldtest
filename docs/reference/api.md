@@ -1,177 +1,163 @@
-# API Reference
+# API Reference (2.x)
 
-## Core Functions
+Upgrading from 1.x: see [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md).
 
-### parseMarkdown(content)
+## @fieldtest/core
 
-Parses markdown content with frontmatter extraction.
+### parseDocument(source, options?)
+
+Parses a Markdown file into front matter (as data), body, and body outline. It never throws and never executes anything.
 
 ```typescript
-import { parseMarkdown } from '@fieldtest/core';
+import { parseDocument } from '@fieldtest/core';
 
-const doc = parseMarkdown(`---
-title: "Hello World"
+const doc = parseDocument(`---
+title: Hello
+date: 2025-01-01
 ---
+# Hello
+`, { path: 'posts/hello.md' });
 
-Content here.
-`);
-
-console.log(doc.frontmatter); // { title: "Hello World" }
-console.log(doc.body);        // "\nContent here.\n"
+doc.frontmatter; // { title: "Hello", date: "2025-01-01" }  (YAML 1.2: dates stay strings)
+doc.keyLines;    // { title: 2, date: 3 }
+doc.outline.headings; // [{ depth: 1, text: "Hello", line: 5 }]
+doc.issues;      // [] — invalid YAML or a ---js fence would be reported here
 ```
 
-- **Parameters:**
-  - `content: string` - Raw markdown string with optional frontmatter
-- **Returns:** `FieldTestDocument`
+- **Parameters:** `source: string`, `options?: { path?: string }`
+- **Returns:** `Document`
 
-### validateWithSchema(schema, data, options?)
+### check(schema, data, options?)
 
-Validates data against a Standard Schema (e.g., Zod schema).
+Validates data with any Standard Schema (zod, valibot, arktype, ...).
 
 ```typescript
-import { validateWithSchema, z } from '@fieldtest/core';
+import { check } from '@fieldtest/core';
 
-const schema = z.object({
-  title: z.string(),
-  count: z.number()
-});
-
-// Returns validated data or failure result
-const result = await validateWithSchema(schema, { title: 'Hi', count: 42 });
-
-if ('issues' in result) {
-  // Validation failed
-  console.error(result.issues);
+const result = await check(schema, { title: 'Hi', count: 42 });
+if (result.ok) {
+  result.value; // typed output
 } else {
-  // result is the validated data with proper types
-  console.log(result.title);
+  result.issues; // Issue[]
 }
 
-// Or throw on error
-const data = await validateWithSchema(schema, input, { throwOnError: true });
+await check(schema, input, { throwOnError: true }); // throws an Error listing the issues
 ```
 
-- **Parameters:**
-  - `schema: StandardSchemaV1` - A Standard Schema compliant schema (Zod, Valibot, etc.)
-  - `data: unknown` - The data to validate
-  - `options?: ValidationOptions` - Optional settings
-    - `throwOnError?: boolean` - Throw instead of returning failure result
-- **Returns:** `Promise<T | StandardSchemaV1.FailureResult>`
+- **Returns:** `Promise<Result<T>>` — `{ ok: true, value, issues: [] }` or `{ ok: false, issues }`
+
+### checkDocument(doc, checks)
+
+Checks a parsed document: its parse issues, then `frontmatter` and `outline` schemas, then rules. `ok` is false when any issue is an error; warnings alone keep it true. Front-matter issues carry the line of their top-level key.
+
+```typescript
+import { checkDocument, relativeLinksResolve } from '@fieldtest/core';
+
+const result = await checkDocument(doc, {
+  frontmatter: z.object({ title: z.string() }),
+  outline: z.object({ lines: z.number().max(500) }),
+  rules: [relativeLinksResolve],
+});
+```
+
+- **Returns:** `Promise<Result<Document>>`
+
+### readDocument(path)
+
+Reads a file and returns `parseDocument(contents, { path })`.
+
+### Rules
+
+A rule is `(doc: Document) => Issue[] | Promise<Issue[]>`, for checks a schema can't express. Built in:
+
+- `relativeLinksResolve` — every relative link in the body points at a file that exists.
+
+### formatIssues(issues) / hasErrors(issues)
+
+`formatIssues` prints one issue per line: `file:line [warn] path: message (hint)`.
 
 ### serializeMarkdown(frontmatter, body)
 
-Serializes frontmatter and body back into a markdown string.
+Writes front matter (YAML) and body back into Markdown. Round-trips with `parseDocument`.
 
-```typescript
-import { serializeMarkdown } from '@fieldtest/core';
+### buildOutline(body, firstLine?)
 
-const markdown = serializeMarkdown(
-  { title: 'My Post', draft: false },
-  '# Hello\n\nContent here.'
-);
-// Returns:
-// ---
-// title: My Post
-// draft: false
-// ---
-// # Hello
-//
-// Content here.
-```
-
-- **Parameters:**
-  - `frontmatter: Record<string, any>` - The frontmatter object
-  - `body: string` - The markdown body content
-- **Returns:** `string`
-
-## Validation Library
-
-FieldTest re-exports Zod and provides additional validation helpers.
-
-### z (Zod)
-
-The Zod library is re-exported for convenience:
-
-```typescript
-import { z } from '@fieldtest/core';
-
-const schema = z.object({
-  title: z.string().min(1),
-  tags: z.array(z.string()).optional()
-});
-```
-
-### validate(schema, input)
-
-Synchronous validation that returns a tuple.
-
-```typescript
-import { validate, z } from '@fieldtest/core';
-
-const schema = z.object({ name: z.string() });
-const [success, result] = validate(schema, { name: 'Alice' });
-
-if (success) {
-  console.log(result.name); // Type-safe
-} else {
-  console.error(result); // ZodError
-}
-```
-
-- **Parameters:**
-  - `schema: z.ZodType<T>` - A Zod schema
-  - `input: unknown` - The data to validate
-- **Returns:** `[boolean, T | z.ZodError]`
-
-### formatZodError(error)
-
-Formats a Zod error into a human-readable string.
-
-```typescript
-import { formatZodError, validate, z } from '@fieldtest/core';
-
-const [success, result] = validate(z.string(), 123);
-if (!success) {
-  console.error(formatZodError(result));
-  // Output: "Expected string, received number"
-}
-```
+The outline builder `parseDocument` uses, exported for bodies you already have.
 
 ## Types
 
-### FieldTestDocument
-
-Represents a parsed markdown document.
-
 ```typescript
-interface FieldTestDocument {
-  /** The original raw markdown content */
+interface Document {
+  path?: string;
   raw: string;
-  /** Parsed frontmatter data */
-  frontmatter: any;
-  /** The main body content without frontmatter */
+  frontmatter: Record<string, unknown>; // {} when missing or unparseable
   body: string;
+  bodyLine: number;                     // 1-based file line where the body starts
+  outline: Outline;
+  issues: Issue[];                      // parse problems
+  keyLines: Record<string, number>;     // 1-based line of each top-level key
 }
+
+interface Outline {
+  lines: number;
+  approxTokens: number;                 // characters / 4
+  headings: { depth: number; text: string; line: number }[];
+  codeBlocks: { lang?: string; line: number }[];
+  links: { href: string; text: string; line: number; relative: boolean }[];
+  listItems: number;
+  tables: number;
+}
+
+interface Issue {
+  message: string;
+  path: (string | number)[];
+  severity: 'error' | 'warn';
+  source: 'data' | 'parse' | 'frontmatter' | 'outline' | 'rule' | 'tree';
+  line?: number;
+  file?: string;
+  rule?: string;
+  hint?: string;
+}
+
+type Result<T> =
+  | { ok: true; value: T; issues: Issue[] }
+  | { ok: false; value?: undefined; issues: Issue[] };
 ```
 
-### StandardSchemaV1
+`StandardSchemaV1` is exported as well; see [standardschema.dev](https://standardschema.dev).
 
-The Standard Schema interface for universal validation compatibility. See [standardschema.dev](https://standardschema.dev) for the full specification.
+The outline is a line scanner, not a full CommonMark parser: it reads ATX (`#`) headings, fenced code, inline links, list items, and pipe tables, and skips the content of code fences.
 
-Zod, Valibot, and other libraries implement this interface, allowing FieldTest to work with any compliant schema library.
+## @fieldtest/registry
 
-### ValidationOptions
+Requires `zod` 3.25+ or 4 as a peer dependency.
+
+### Agent skills
 
 ```typescript
-interface ValidationOptions {
-  /** Throw error on validation failure instead of returning result object */
-  throwOnError?: boolean;
-}
+import { checkSkill, checkSkillTree } from '@fieldtest/registry';
+
+const report = await checkSkillTree(['.claude/skills'], { profile: 'claude-code' });
+report.ok; report.files; report.errors; report.warnings; report.issues;
 ```
+
+- `profile: 'spec'` (default): the [Agent Skills specification](https://agentskills.io/specification). Unknown keys and a `name` that doesn't match its folder are errors.
+- `profile: 'claude-code'`: the fields [Claude Code](https://code.claude.com/docs/en/skills) accepts. Unknown keys are warnings, with a "did you mean" for near misses.
+- Both: body over 500 lines or about 5,000 tokens (warning), relative links that don't resolve (error), and copies of the same skill with different contents (warning, from `checkSkillTree`).
+- Also exported: `skillSpecFrontmatter`, `skillClaudeCodeFrontmatter`, `findSkillFiles`, `SKILL_FIELDS` (with each host's source URL and the date it was checked).
+
+### CLI
+
+```bash
+fieldtest skills <dir...> [--profile spec|claude-code] [--json] [--errors-only]
+```
+
+Exits 1 when any error is found.
+
+### Obsidian Bases
+
+`validateBasesMetadata`, `validateSystemSpecificMetadata`, `generateDefaultMetadata`, and their schemas, unchanged from 1.x.
 
 ## OpenAPI Helpers
 
-FieldTest includes OpenAPI to Zod conversion via `@fieldtest/openapi`.
-
-- **Guide:** [OpenAPI Integration](/guides/openapi-integration)
-- **Reference:** [OpenAPI Reference](/reference/openapi)
+OpenAPI to zod conversion lives in `@fieldtest/openapi`. See the [OpenAPI Reference](/reference/openapi).

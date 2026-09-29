@@ -1,53 +1,32 @@
+# @fieldtest/registry
 
-# Fieldtest Registry
+Ready-made [FieldTest](https://github.com/watthem/fieldtest) checks, and the `fieldtest` CLI.
 
-The Fieldtest Registry is a collection of schemas for common content types.
-
-## Running the Standard Schema Example
-
-To run the Standard Schema example in this package, use the following commands from this directory:
-
-```powershell
-# Compile the example to CommonJS JavaScript
-tsc standard-schema.example.ts --module commonjs --esModuleInterop --outDir dist
-
-# Run the compiled JavaScript with Node.js
-node dist/standard-schema.example.js
+```bash
+npm install @fieldtest/registry zod
 ```
 
-You should see output like:
+## Agent skills
 
-```json
-Success: hello world
-Expected failure: Error: [
-  {
-    "message": "Must be a string"
-  }
-]
+```bash
+npx fieldtest skills .claude/skills --profile claude-code
 ```
 
-> Note: Directly running the example with ts-node may fail due to ESM/CommonJS module system conflicts. Compiling first is the most reliable approach.
+Checks every SKILL.md under the given folders:
 
-## Running All Examples Easily
+- `--profile spec` (default): the [Agent Skills specification](https://agentskills.io/specification): `name` (1–64 lowercase letters, digits, single hyphens, matching its folder), `description` (1–1024), `compatibility` (≤500), `metadata` (string to string), `allowed-tools` (string). Unknown keys are errors.
+- `--profile claude-code`: the fields [Claude Code](https://code.claude.com/docs/en/skills) accepts. Unknown keys are warnings with a "did you mean" (`user-invokable` → `user-invocable`), and a warning when `description` + `when_to_use` passes the 1,536-character listing limit.
+- Both: invalid YAML (with a fix for unquoted colons), body over 500 lines or about 5,000 tokens, relative links that don't resolve, and copies of the same skill whose contents differ.
 
-To run all Standard Schema example files and see a summary of results, use:
+Exits 1 on errors. `--json` prints the full report; `--errors-only` hides warnings.
 
-```powershell
-# Compile the runner script and run it
-# (from this directory)
-tsc run-examples.ts --module commonjs --esModuleInterop --outDir dist
-node dist/run-examples.js
+```ts
+import { checkSkillTree } from "@fieldtest/registry";
+const report = await checkSkillTree([".claude/skills"], { profile: "claude-code" });
 ```
 
-You'll see colorized output for each example and a summary at the end, e.g.:
+## Obsidian Bases
 
-```log
-[SUCCESS] standard-schema.example.ts
-[SUCCESS] standard-schema-async.example.ts
-[SUCCESS] standard-schema-missing-types.example.ts
-[SUCCESS] standard-schema-bad-result.example.ts
+`validateBasesMetadata`, `validateSystemSpecificMetadata`, `generateDefaultMetadata`, and their zod schemas.
 
-Summary: 4 passed, 0 failed
-```
-
-> This is the easiest way to check all example behaviors at once!
+MIT

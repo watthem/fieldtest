@@ -1,5 +1,7 @@
 # Examples
 
+> **Written for FieldTest 1.x.** 2.0 replaced `parseMarkdown`, `validateWithSchema`, `validate`, and `formatZodError` with `parseDocument`, `check`, and `checkDocument`, and core no longer re-exports zod. See [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md) and the [API reference](/reference/api).
+
 Explore real-world examples and patterns for using FieldTest with different frameworks and use cases. Each example includes complete, working code that you can copy and adapt for your projects.
 
 ## Quick Examples

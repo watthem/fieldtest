@@ -1,42 +1,31 @@
-# FieldTest Core
+# @fieldtest/core
 
-**FieldTest** is a framework-agnostic TypeScript validation toolkit for Markdown and Standard Schema. It helps you catch content errors at build time, with strong TypeScript support and clear diagnostics.
-
-## Install
+Validate Markdown documents and data with any [Standard Schema](https://standardschema.dev) library (zod, valibot, arktype, ...).
 
 ```bash
-npm install @fieldtest/core
-# or
-pnpm add @fieldtest/core
+npm install @fieldtest/core zod
 ```
-
-## Quick Example
 
 ```ts
-import { parseMarkdown, validateWithSchema, z } from "@fieldtest/core";
+import { check, checkDocument, formatIssues, parseDocument } from "@fieldtest/core";
+import { z } from "zod";
 
-const blogSchema = z.object({
-  title: z.string(),
-  date: z.coerce.date(), // YAML reads 2025-01-01 as a Date
-  tags: z.array(z.string()).optional(),
+// A document: front matter as data, body as an outline
+const doc = parseDocument(text, { path: "posts/hello.md" });
+const result = await checkDocument(doc, {
+  frontmatter: z.object({ title: z.string(), date: z.string().date() }),
+  outline: z.object({ lines: z.number().max(500) }),
 });
+if (!result.ok) console.error(formatIssues(result.issues));
 
-const doc = parseMarkdown(`---\ntitle: Hello\ndate: 2025-01-01\n---\nContent`);
-const result = await validateWithSchema(blogSchema, doc.frontmatter, { throwOnError: true });
+// Any data
+const r = await check(schema, record); // { ok: true, value } | { ok: false, issues }
 ```
 
-## Features
+- Front matter is parsed as YAML 1.2 data and never executed.
+- Parsing never throws: invalid YAML is an issue with the file line.
+- One dependency: `yaml`.
 
-- Markdown + frontmatter parsing
-- Standard Schema compatibility
-- Zod-based schema authoring
-- Helpful error formatting
-- Fast validation for large content sets
-
-## Documentation
-
-https://docs.matthewhendricks.net/fieldtest/
-
-## License
+API: [docs/reference/api.md](https://github.com/watthem/fieldtest/blob/main/docs/reference/api.md). Upgrading from 1.x: [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md).
 
 MIT

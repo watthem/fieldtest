@@ -1,16 +1,17 @@
 {
 	"name": "@fieldtest/core",
-	"version": "1.0.3",
-	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
+	"version": "2.0.0",
+	"description": "Validate Markdown documents and data with any Standard Schema: front matter, body outline, and rules.",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
-			"types": "./dist/index.d.ts"
-		}
+			"require": "./dist/index.js"
+		},
+		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
 	"files": [
@@ -25,7 +26,7 @@
 		"build": "tsup",
 		"dev": "tsup --watch",
 		"clean": "rimraf dist",
-		"lint": "eslint src --ext .ts",
+		"lint": "tsc --noEmit -p .",
 		"test": "vitest run"
 	},
 	"keywords": [
@@ -33,7 +34,7 @@
 		"typescript",
 		"schema",
 		"data-pipeline",
-		"api-testing", 
+		"api-testing",
 		"integration-testing",
 		"standard-schema",
 		"quality-assurance",
@@ -50,7 +51,7 @@
 	"author": "Matthew Hendricks <hello@matthewhendricks.net>",
 	"license": "MIT",
 	"engines": {
-		"node": ">=18.0.0"
+		"node": ">=18.3.0"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -62,9 +63,11 @@
 		"rimraf": "^5.0.0",
 		"tsup": "^7.2.0",
 		"typescript": "^5.2.2",
-		"vitest": "^1.0.0"
+		"vitest": "^1.0.0",
+		"zod": "^4.1.0",
+		"valibot": "^1.1.0"
 	},
 	"dependencies": {
-	    "@fieldtest/validation-lib": "^1.0.2",
-	    "gray-matter": "^4.0.3"
-	  }}
+		"yaml": "^2.9.1"
+	}
+}

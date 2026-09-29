@@ -5,6 +5,24 @@ All notable changes to FieldTest will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-09-29
+
+A Markdown document is now checked as two kinds of data: front matter and a body outline. See MIGRATING.md.
+
+### Added
+
+- `parseDocument` (YAML 1.2 via `yaml`; parse problems returned as issues with file lines, never thrown), `checkDocument` (front matter schema, outline schema, rules), `buildOutline`, `readDocument`, `relativeLinksResolve`.
+- `check` returning `{ ok, value }` or `{ ok: false, issues }`, `formatIssues`, `hasErrors`, and one `Issue` shape with `severity`, `source`, `line`, `file`, `rule`, and `hint`.
+
+### Removed (breaking)
+
+- `parseMarkdown`, `validateWithSchema`, `validate`, `formatZodError`, and the `z` re-export. Core no longer depends on zod, gray-matter, or `@fieldtest/validation-lib`.
+
+### Changed (breaking)
+
+- YAML 1.2: unquoted dates and `yes`/`no` stay strings.
+- Node 18.3 or later.
+
 ## [1.0.3] - 2026-09-29
 
 ### Security

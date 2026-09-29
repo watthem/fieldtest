@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { parseMarkdown, validateWithSchema } from "@fieldtest/core";
+import { check, parseDocument } from "@fieldtest/core";
 
 async function runExample(
 	examplePath: string,
@@ -10,7 +10,7 @@ async function runExample(
 ) {
 	const fullPath = path.join(examplePath, filename);
 	const content = fs.readFileSync(fullPath, "utf8");
-	const parsed = parseMarkdown(content);
+	const parsed = parseDocument(content, { path: fullPath });
 	const schema = await import(path.join(examplePath, schemaModule));
 
 	// Use the named export (e.g. blogPostStandard) or first StandardSchemaV1 found
@@ -21,12 +21,12 @@ async function runExample(
 		throw new Error("No StandardSchema validator found in " + schemaModule);
 
 	console.log(`\n✅ Validating: ${fullPath}`);
-	const result = await validateWithSchema(validator, parsed.frontmatter);
+	const result = await check(validator, parsed.frontmatter);
 
-	if (result.issues) {
+	if (!result.ok) {
 		console.error("❌ Validation failed:");
-		result.issues.forEach((issue: any) => {
-			console.error(`- ${issue.message} @ ${issue.path?.join(".") || "root"}`);
+		result.issues.forEach((issue) => {
+			console.error(`- ${issue.message} @ ${issue.path.join(".") || "root"}`);
 		});
 	} else {
 		console.log("✅ Valid frontmatter");

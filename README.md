@@ -1,95 +1,85 @@
 # FieldTest
 
-> **A validation toolkit for Markdown and Standard Schema — built for Astro, Next.js, and modern frameworks.**
+> Validate Markdown documents and data with any Standard Schema: front matter, body structure, and agent skills.
 
 [![npm version](https://img.shields.io/npm/v/@fieldtest/core.svg)](https://www.npmjs.com/package/@fieldtest/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![GitHub stars](https://img.shields.io/github/stars/watthem/fieldtest.svg?style=social)](https://github.com/watthem/fieldtest)
 
-**FieldTest** is a framework-agnostic TypeScript validation toolkit that brings order to content chaos. Whether you're building with Astro, Next.js, or any modern framework, FieldTest ensures your markdown content and frontmatter data is consistent, valid, and production-ready.
+A Markdown file is two kinds of data. The front matter is structured YAML. The body looks like free text, but Markdown gives every document the same few elements: headings, code blocks, links, lists, and tables. FieldTest parses the front matter as data and turns the body into a fixed **outline**, so the schema library you already use (zod, valibot, arktype, anything that implements [Standard Schema](https://standardschema.dev)) can check both.
 
-## Why FieldTest?
+- **Never executes anything.** Front matter is parsed as YAML 1.2 data. `---js` front matter is reported, not run.
+- **Never throws on bad input.** Invalid YAML comes back as an issue with the file line and, when there's an obvious one, a fix.
+- **One result shape.** Every check returns `{ ok: true, value }` or `{ ok: false, issues }`.
+- **Agent skills built in.** `fieldtest skills` checks SKILL.md files against the Agent Skills spec or Claude Code.
 
-- Catch validation issues at build time
-- Works across Astro, Next.js, Remix, SvelteKit, and more
-- Built on [Standard Schema v1](https://standardschema.dev)
-- Fast validation for large content sets
-- Strong TypeScript support with clear errors
-- Sensible defaults with easy customization
+## Packages
 
-## Project Structure
+| Package | What it does |
+|---|---|
+| [`@fieldtest/core`](packages/core) | `parseDocument`, `check`, `checkDocument`, outline, rules. One dependency (`yaml`). |
+| [`@fieldtest/registry`](packages/registry) | Ready-made checks (Agent Skills, Obsidian Bases) and the `fieldtest` CLI. Needs `zod` 3.25+ or 4. |
+| [`@fieldtest/doc-ref`](packages/doc-ref) | Link tests to documentation sections. |
+| [`@fieldtest/openapi`](packages/openapi) | OpenAPI to zod schemas. |
 
-```
-fieldtest/
-├── packages/
-│   ├── core/                    # Core markdown processing
-│   ├── validate/                # Validation utilities
-│   ├── registry/                # Schema registry
-│   ├── shared/                  # Common utilities and types
-│   ├── examples/                # Example implementations
-│   └── integrations/
-│       └── mcp/
-│           └── fieldtest-mcp-server/  # MCP server for AI workflows
-├── grit-plugins/                # Biome GritQL linting plugins
-├── docs/                        # Documentation
-│   ├── guides/                  # How-to guides
-│   ├── reference/               # API reference
-│   └── explainers/              # Conceptual articles
-├── scripts/                     # Build and utility scripts
-└── biome.json                   # Biome configuration
-```
+Upgrading from 1.x: see [MIGRATING.md](MIGRATING.md).
 
-## Features
-
-- Content validation for markdown + frontmatter
-- Standard Schema compatibility
-- Framework integrations for Astro and Next.js
-- Schema registry and reusable validators
-- OpenAPI helpers
-- Markdown parsing + serialization
-- MCP server for AI workflows
-- Biome plugins for linting/migration
-
-## OpenAPI Quickstart
-
-```ts
-import { loadOpenApiSchemas } from "@fieldtest/openapi";
-import { validate } from "@fieldtest/validation-lib";
-
-const registry = loadOpenApiSchemas("./openapi.yaml");
-const createUser = registry.paths["/users"].post;
-
-const [ok] = validate(createUser.requestBody!, { name: "Ada" });
-```
-
-## Quick Start
-
-### Installation
+## Validate a document
 
 ```bash
-npm install @fieldtest/core
-# or
-pnpm add @fieldtest/core
+npm install @fieldtest/core zod
 ```
-
-### Validate your first document
 
 ```ts
-import { parseMarkdown, validateWithSchema, z } from "@fieldtest/core";
+import { checkDocument, formatIssues, parseDocument } from "@fieldtest/core";
+import { z } from "zod";
 
-const blogSchema = z.object({
-  title: z.string(),
-  date: z.coerce.date(), // YAML reads 2025-01-01 as a Date
-  tags: z.array(z.string()).optional(),
+const doc = parseDocument(`---
+title: Hello
+date: 2025-01-01
+---
+# Hello
+
+Read the [guide](./guide.md).
+`, { path: "posts/hello.md" });
+
+const result = await checkDocument(doc, {
+  frontmatter: z.object({ title: z.string(), date: z.string().date() }),
+  outline: z.object({ headings: z.array(z.object({ depth: z.number() })).min(1) }),
 });
 
-const doc = parseMarkdown(`---\ntitle: Hello\ndate: 2025-01-01\n---\nContent`);
-const result = await validateWithSchema(blogSchema, doc.frontmatter, { throwOnError: true });
+if (!result.ok) console.error(formatIssues(result.issues));
+// With `title: 3` instead, this prints:
+// posts/hello.md:2 title: Invalid input: expected string, received number
 ```
+
+## Validate data
+
+```ts
+import { check } from "@fieldtest/core";
+
+const result = await check(schema, record);
+if (result.ok) use(result.value);
+else report(result.issues);
+```
+
+## Check agent skills
+
+```bash
+npx -p @fieldtest/registry -p zod fieldtest skills .claude/skills --profile claude-code
+```
+
+```
+.claude/skills/deploy/SKILL.md:4 warn user-invokable: Unknown key "user-invokable"; the host ignores it (did you mean "user-invocable"?)
+.claude/skills/triage/SKILL.md:3 Invalid YAML: Nested mappings are not allowed in compact mappings (quote the value, e.g. key: "text: more")
+
+12 SKILL.md files (claude-code): 1 errors, 1 warnings in 2 files
+```
+
+Profiles: `spec` (default, the [Agent Skills specification](https://agentskills.io/specification)) and `claude-code` (the fields [Claude Code](https://code.claude.com/docs/en/skills) accepts). It also warns when copies of the same skill have drifted apart. The CLI exits 1 on errors, so it works in CI and pre-commit hooks.
 
 ## Documentation
 
+- API reference: [docs/reference/api.md](docs/reference/api.md)
 - Docs hub: https://docs.matthewhendricks.net/fieldtest/
 - Issues: https://github.com/watthem/fieldtest/issues
 

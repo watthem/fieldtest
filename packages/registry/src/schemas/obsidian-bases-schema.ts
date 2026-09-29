@@ -143,8 +143,8 @@ export function validateSystemSpecificMetadata(data: unknown): SystemSpecificMet
 
 // Template generation helpers
 export function generateDefaultMetadata(
-  system: SystemType['_output'],
-  type: ContentType['_output'],
+  system: z.infer<typeof SystemType>,
+  type: z.infer<typeof ContentType>,
   overrides: Partial<BasesMetadata> = {}
 ): BasesMetadata {
   const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
