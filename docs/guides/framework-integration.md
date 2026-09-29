@@ -1,6 +1,6 @@
 # Framework Integration Guide
 
-> **Written for FieldTest 1.x.** 2.0 replaced `parseMarkdown`, `validateWithSchema`, `validate`, and `formatZodError` with `parseDocument`, `check`, and `checkDocument`, and core no longer re-exports zod. See [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md) and the [API reference](/reference/api).
+> **Written for FieldTest 2.0** (`@fieldtest/core` 2.0.0, Node 20 or later). Every example below uses the 2.0 API: `parseDocument`, `check`, `checkDocument`, `readDocument`, and `formatIssues`, with a schema written in zod (or any other [Standard Schema](https://standardschema.dev/) library). If you are on 1.x, that API is gone (`parseMarkdown`, `validateWithSchema`, `validate`, `formatZodError`, `loadUserSchema`, and the `{ version, name, fields }` schema object); follow [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md) first, and see the [API reference](/reference/api).
 
 Learn how to integrate FieldTest with Astro, Next.js, and other modern frameworks.
 
@@ -14,113 +14,133 @@ Learn how to integrate FieldTest with Astro, Next.js, and other modern framework
 
 ---
 
+## The pattern
+
+Every example here does the same three things:
+
+1. **Define the schema once**, in zod or any other Standard Schema library. It is an ordinary value; there is no loading step.
+2. **Parse the file** with `parseDocument(text, { path })`. It never throws and never runs front matter: bad YAML, or a non-YAML fence such as `---js`, comes back as issues on the document.
+3. **Check it** with `checkDocument(doc, { frontmatter, outline, rules })`. You get `{ ok: true, value }` or `{ ok: false, issues }`, and `formatIssues(issues)` turns the issues into one line each, with file and line.
+
+For plain data (an API payload, not a Markdown file) use `check(schema, data)`, which returns the same result shape.
+
+Two behaviours to know about:
+
+- Front matter is parsed as YAML 1.2, so an unquoted `2025-01-01` stays a string. The schemas below use `z.coerce.date()`.
+- `checkDocument` also reports parse issues, so a file with broken YAML fails even when the schema would accept `{}`. If you call `check(schema, doc.frontmatter)` directly, look at `doc.issues` yourself.
+
+**src/schemas.ts** (shared by every example):
+
+```typescript
+import { z } from 'zod';
+
+export const blogPostSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  publishedAt: z.coerce.date(),
+  author: z.string(),
+  tags: z.array(z.string()).optional()
+});
+
+export type BlogPostFrontmatter = z.infer<typeof blogPostSchema>;
+
+// Checks on the body's shape. `outline` has headings, codeBlocks, links,
+// lines, approxTokens, listItems, and tables.
+export const blogOutlineSchema = z.object({
+  lines: z.number().max(2000, 'Post is over 2,000 lines'),
+  headings: z.array(z.object({ depth: z.number() })).refine(
+    (headings) => !headings.some((h) => h.depth === 1),
+    'Use the title field, not a # heading'
+  )
+});
+```
+
+**src/lib/check-post.ts** (a small helper the examples reuse):
+
+```typescript
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import {
+  checkDocument,
+  formatIssues,
+  readDocument,
+  relativeLinksResolve
+} from '@fieldtest/core';
+import { blogPostSchema, blogOutlineSchema } from '../schemas';
+
+/** Check one Markdown file: front matter, outline, and that relative links resolve. */
+export async function checkPostFile(path: string) {
+  const doc = await readDocument(path); // reads the file and calls parseDocument with { path }
+  return checkDocument(doc, {
+    frontmatter: blogPostSchema,
+    outline: blogOutlineSchema,
+    rules: [relativeLinksResolve]
+  });
+}
+
+/** Check every Markdown file in a directory. Returns the failures, one formatted block per file. */
+export async function checkPostDir(dir: string): Promise<string[]> {
+  const failures: string[] = [];
+  for (const name of (await readdir(dir)).filter((f) => /\.mdx?$/.test(f))) {
+    const result = await checkPostFile(join(dir, name));
+    if (!result.ok) failures.push(formatIssues(result.issues));
+  }
+  return failures;
+}
+```
+
+---
+
 ## Astro Integration
 
 ### Installation
 
 ```bash
-pnpm add @fieldtest/core
+pnpm add @fieldtest/core zod
 ```
 
-### Content Collections with Validation
+### Content Collections
 
-Astro's content collections work perfectly with FieldTest:
+Astro validates a collection's front matter itself, with the `z` from `astro:content`. Keep that schema for the editor types and `astro sync`, and let FieldTest cover what Astro's schema cannot see: YAML parse problems with line numbers, the body outline, and file-system rules such as relative links.
 
 **src/content/config.ts:**
 
 ```typescript
 import { defineCollection, z } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
-import type { StandardSchemaV1 } from '@fieldtest/core';
 
-// Define your FieldTest schema
-const blogPostSchema: StandardSchemaV1 = {
-  version: '1',
-  name: 'blog-post',
-  fields: {
-    title: { type: 'string', required: true },
-    description: { type: 'string', required: true },
-    publishedAt: { type: 'date', required: true },
-    author: { type: 'string', required: true },
-    tags: { type: 'string', array: true }
-  }
-};
-
-// Load the schema
-const fieldTestSchema = loadUserSchema(blogPostSchema);
-
-// Define collection with Astro + FieldTest validation
 const blog = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    publishedAt: z.date(),
+    publishedAt: z.coerce.date(),
     author: z.string(),
     tags: z.array(z.string()).optional()
-  }).refine((data) => {
-    // Additional FieldTest validation
-    const content = `---
-title: ${data.title}
-description: ${data.description}
-publishedAt: ${data.publishedAt.toISOString()}
-author: ${data.author}
-${data.tags ? `tags: [${data.tags.map(t => `"${t}"`).join(', ')}]` : ''}
----`;
-    
-    const result = validateAstroContent(content, fieldTestSchema);
-    
-    if (!result.valid) {
-      throw new Error(`FieldTest validation failed: ${result.errors.map(e => e.message).join(', ')}`);
-    }
-    
-    return true;
   })
 });
 
 export const collections = { blog };
 ```
 
+This is the same shape as `blogPostSchema` in `src/schemas.ts`. Astro bundles its own zod, which can be a different major version from the one you install, so the two are declared separately.
+
 ### Validating During Build
 
-Create a validation script that runs during build:
+Create a validation script that runs before `astro build`:
 
 **scripts/validate-content.ts:**
 
 ```typescript
-import { getCollection } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
-import { blogPostSchema } from '../src/schemas';
+import { checkPostDir } from '../src/lib/check-post';
 
-async function validateContent() {
-  const schema = loadUserSchema(blogPostSchema);
-  const posts = await getCollection('blog');
-  
-  let hasErrors = false;
-  
-  for (const post of posts) {
-    const content = post.body; // Full markdown content
-    const result = validateAstroContent(content, schema);
-    
-    if (!result.valid) {
-      console.error(`\n❌ ${post.id} failed validation:`);
-      result.errors.forEach(error => {
-        console.error(`   - ${error.field}: ${error.message}`);
-      });
-      hasErrors = true;
-    } else {
-      console.log(`✓ ${post.id}`);
-    }
-  }
-  
-  if (hasErrors) {
-    process.exit(1);
-  }
-  
-  console.log('\n✓ All content validated successfully!');
+const failures = await checkPostDir('src/content/blog');
+
+if (failures.length > 0) {
+  console.error(failures.join('\n\n'));
+  process.exit(1);
 }
 
-validateContent();
+console.log('All content validated successfully.');
 ```
 
 **package.json:**
@@ -134,35 +154,30 @@ validateContent();
 }
 ```
 
+The script uses top-level `await`, so it needs `"type": "module"` in `package.json` (Astro projects have it). A failing file prints one line per issue, for example `src/content/blog/post.md:10 Link target not found: ./nope.md` or `src/content/blog/post.md:3 Invalid YAML: ... (quote the value, e.g. key: "text: more")`.
+
 ### Dynamic Pages with Validation
 
-Validate content when generating dynamic pages:
+Validate the content directory when generating dynamic pages:
 
 **src/pages/blog/[slug].astro:**
 
 ```astro
 ---
 import { getCollection } from 'astro:content';
-import { validateAstroContent, loadUserSchema } from '@fieldtest/core';
-import { blogPostSchema } from '../../schemas';
+import { checkPostDir } from '../../lib/check-post';
 
 export async function getStaticPaths() {
-  const schema = loadUserSchema(blogPostSchema);
+  const failures = await checkPostDir('src/content/blog');
+  if (failures.length > 0) {
+    throw new Error(`Invalid content:\n${failures.join('\n\n')}`);
+  }
+
   const posts = await getCollection('blog');
-  
-  return posts.map(post => {
-    // Validate each post
-    const result = validateAstroContent(post.body, schema);
-    
-    if (!result.valid) {
-      throw new Error(`Invalid post ${post.id}: ${result.errors.map(e => e.message).join(', ')}`);
-    }
-    
-    return {
-      params: { slug: post.slug },
-      props: { post }
-    };
-  });
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
 }
 
 const { post } = Astro.props;
@@ -185,56 +200,46 @@ const { Content } = await post.render();
 **app/blog/[slug]/page.tsx:**
 
 ```typescript
-import { validateNextContent, loadUserSchema } from '@fieldtest/core';
-import type { StandardSchemaV1 } from '@fieldtest/core';
 import fs from 'fs';
 import path from 'path';
-import { parseDocument } from '@fieldtest/core'; // YAML only; never executes front matter
+import { checkDocument, formatIssues, parseDocument } from '@fieldtest/core';
+import { blogPostSchema, type BlogPostFrontmatter } from '../../../schemas';
+import { renderMarkdown } from '../../../lib/render-markdown'; // your renderer: remark, marked, ...
 
-const blogPostSchema: StandardSchemaV1 = {
-  version: '1',
-  name: 'blog-post',
-  fields: {
-    title: { type: 'string', required: true },
-    author: { type: 'string', required: true },
-    publishedAt: { type: 'date', required: true }
-  }
-};
-
-const schema = loadUserSchema(blogPostSchema);
+const postsDirectory = path.join(process.cwd(), 'content/posts');
 
 export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), 'content/posts');
-  const filenames = fs.readdirSync(postsDirectory);
-  
-  return filenames.map(filename => ({
+  return fs.readdirSync(postsDirectory).map(filename => ({
     slug: filename.replace('.md', '')
   }));
 }
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const postsDirectory = path.join(process.cwd(), 'content/posts');
   const fullPath = path.join(postsDirectory, `${params.slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf-8');
-  
-  // Validate content
-  const result = validateNextContent(fileContents, schema);
-  
-  if (!result.valid) {
-    throw new Error(`Content validation failed: ${result.errors.map(e => e.message).join(', ')}`);
+
+  // parseDocument reads YAML only and never executes front matter.
+  const doc = parseDocument(fileContents, { path: fullPath });
+  const result = await checkDocument(doc, { frontmatter: blogPostSchema });
+
+  if (!result.ok) {
+    throw new Error(`Content validation failed:\n${formatIssues(result.issues)}`);
   }
-  
-  const { frontmatter: data, body: content } = parseDocument(fileContents);
-  
+
+  const data = doc.frontmatter as BlogPostFrontmatter; // checked above
+  const html = await renderMarkdown(doc.body);
+
   return (
     <article>
       <h1>{data.title}</h1>
       <p>By {data.author}</p>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </article>
   );
 }
 ```
+
+`doc.body` is Markdown source, not HTML, so render it before inserting it into the page. Only pass `dangerouslySetInnerHTML` output from a renderer you trust with content you control.
 
 ### Pages Router (Next.js 12 and earlier)
 
@@ -242,58 +247,56 @@ export default async function BlogPost({ params }: { params: { slug: string } })
 
 ```typescript
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { validateNextContent, loadUserSchema } from '@fieldtest/core';
-import { blogPostSchema } from '../../schemas';
 import fs from 'fs';
 import path from 'path';
+import { checkDocument, formatIssues, parseDocument } from '@fieldtest/core';
+import { blogPostSchema, type BlogPostFrontmatter } from '../../schemas';
+import { renderMarkdown } from '../../lib/render-markdown'; // your renderer
 
 interface BlogPostProps {
   title: string;
   author: string;
-  content: string;
+  html: string;
 }
 
+const postsDirectory = path.join(process.cwd(), 'content/posts');
+
 export const getStaticPaths: GetStaticPaths = async () => {
-  const postsDirectory = path.join(process.cwd(), 'content/posts');
-  const filenames = fs.readdirSync(postsDirectory);
-  
-  const paths = filenames.map(filename => ({
+  const paths = fs.readdirSync(postsDirectory).map(filename => ({
     params: { slug: filename.replace('.md', '') }
   }));
-  
+
   return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps<BlogPostProps> = async ({ params }) => {
-  const schema = loadUserSchema(blogPostSchema);
-  const postsDirectory = path.join(process.cwd(), 'content/posts');
   const fullPath = path.join(postsDirectory, `${params!.slug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf-8');
-  
+  const doc = parseDocument(fs.readFileSync(fullPath, 'utf-8'), { path: fullPath });
+
   // Validate during build
-  const result = validateNextContent(fileContents, schema);
-  
-  if (!result.valid) {
-    throw new Error(`Invalid content in ${params!.slug}: ${result.errors.map(e => e.message).join(', ')}`);
+  const result = await checkDocument(doc, { frontmatter: blogPostSchema });
+
+  if (!result.ok) {
+    throw new Error(`Invalid content:\n${formatIssues(result.issues)}`);
   }
-  
-  const { frontmatter: data, body: content } = parseDocument(fileContents);
-  
+
+  const data = doc.frontmatter as BlogPostFrontmatter; // checked above
+
   return {
     props: {
       title: data.title,
       author: data.author,
-      content
+      html: await renderMarkdown(doc.body)
     }
   };
 };
 
-export default function BlogPost({ title, author, content }: BlogPostProps) {
+export default function BlogPost({ title, author, html }: BlogPostProps) {
   return (
     <article>
       <h1>{title}</h1>
       <p>By {author}</p>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </article>
   );
 }
@@ -301,26 +304,27 @@ export default function BlogPost({ title, author, content }: BlogPostProps) {
 
 ### API Routes
 
-Validate content in API endpoints:
+Validate content in API endpoints. `parseDocument` is safe on text you did not write: it only reads YAML.
 
 **app/api/validate/route.ts (App Router):**
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { validateNextContent, loadUserSchema } from '@fieldtest/core';
+import { checkDocument, parseDocument } from '@fieldtest/core';
 import { blogPostSchema } from '../../../schemas';
 
 export async function POST(request: NextRequest) {
   try {
     const { content } = await request.json();
-    const schema = loadUserSchema(blogPostSchema);
-    const result = validateNextContent(content, schema);
-    
-    if (result.valid) {
+    const result = await checkDocument(parseDocument(String(content)), {
+      frontmatter: blogPostSchema
+    });
+
+    if (result.ok) {
       return NextResponse.json({ valid: true });
     } else {
       return NextResponse.json(
-        { valid: false, errors: result.errors },
+        { valid: false, issues: result.issues },
         { status: 400 }
       );
     }
@@ -337,22 +341,23 @@ export async function POST(request: NextRequest) {
 
 ## Other Frameworks
 
+These use a `loadMarkdownFile` helper that returns the file's text; substitute your own loader.
+
 ### Remix
 
 ```typescript
 import { json, LoaderFunction } from '@remix-run/node';
-import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
+import { checkDocument, formatIssues, parseDocument } from '@fieldtest/core';
 import { blogPostSchema } from '../schemas';
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const schema = loadUserSchema(blogPostSchema);
   const content = await loadMarkdownFile(params.slug);
-  const result = validateWithSchema(content, schema);
-  
-  if (!result.valid) {
-    throw new Response('Invalid content', { status: 400 });
+  const result = await checkDocument(parseDocument(content), { frontmatter: blogPostSchema });
+
+  if (!result.ok) {
+    throw new Response(formatIssues(result.issues), { status: 400 });
   }
-  
+
   return json({ content });
 };
 ```
@@ -360,22 +365,19 @@ export const loader: LoaderFunction = async ({ params }) => {
 ### SvelteKit
 
 ```typescript
-import type { Load } from '@sveltejs/kit';
-import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { checkDocument, parseDocument } from '@fieldtest/core';
 import { blogPostSchema } from '$lib/schemas';
 
-export const load: Load = async ({ params }) => {
-  const schema = loadUserSchema(blogPostSchema);
+export const load: PageServerLoad = async ({ params }) => {
   const content = await loadMarkdownFile(params.slug);
-  const result = validateWithSchema(content, schema);
-  
-  if (!result.valid) {
-    return {
-      status: 400,
-      error: new Error('Invalid content')
-    };
+  const result = await checkDocument(parseDocument(content), { frontmatter: blogPostSchema });
+
+  if (!result.ok) {
+    error(400, 'Invalid content');
   }
-  
+
   return { content };
 };
 ```
@@ -383,22 +385,21 @@ export const load: Load = async ({ params }) => {
 ### Nuxt 3
 
 ```typescript
+import { checkDocument, parseDocument } from '@fieldtest/core';
+import { blogPostSchema } from '~/schemas';
+
 export default defineEventHandler(async (event) => {
-  const { validateWithSchema, loadUserSchema } = await import('@fieldtest/core');
-  const { blogPostSchema } = await import('~/schemas');
-  
   const slug = event.context.params.slug;
-  const schema = loadUserSchema(blogPostSchema);
   const content = await loadMarkdownFile(slug);
-  const result = validateWithSchema(content, schema);
-  
-  if (!result.valid) {
+  const result = await checkDocument(parseDocument(content), { frontmatter: blogPostSchema });
+
+  if (!result.ok) {
     throw createError({
       statusCode: 400,
       message: 'Invalid content'
     });
   }
-  
+
   return { content };
 });
 ```
@@ -407,31 +408,34 @@ export default defineEventHandler(async (event) => {
 
 ## Error Handling Strategies
 
+Every failure is a list of `Issue` objects: `message`, `path` (keys to the field), `severity` (`"error"` or `"warn"`), `source` (`"parse"`, `"frontmatter"`, `"outline"`, `"rule"`, `"tree"`, or `"data"`), and, when known, `line`, `file`, `rule`, and `hint`. A result is `ok` when there are no errors, so warnings never fail a build on their own; `result.issues` still lists them.
+
 ### Development vs Production
 
 ```typescript
-import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
+import { checkDocument, formatIssues, parseDocument } from '@fieldtest/core';
+import { blogPostSchema } from './schemas';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-function validateContent(content: string, schema: StandardSchema) {
-  const result = validateWithSchema(content, schema);
-  
-  if (!result.valid) {
+async function validateContent(content: string, path?: string) {
+  const result = await checkDocument(parseDocument(content, { path }), {
+    frontmatter: blogPostSchema
+  });
+
+  if (!result.ok) {
     if (isDevelopment) {
       // Show detailed errors in development
-      console.error('❌ Validation failed:');
-      result.errors.forEach(e => {
-        console.error(`   ${e.field}: ${e.message}`);
-      });
+      console.error('Validation failed:');
+      console.error(formatIssues(result.issues));
       throw new Error('Content validation failed - see console for details');
     } else {
       // Log but don't expose details in production
-      console.error('Validation failed:', result.errors);
+      console.error('Validation failed:', result.issues);
       throw new Error('Content validation failed');
     }
   }
-  
+
   return result;
 }
 ```
@@ -439,20 +443,27 @@ function validateContent(content: string, schema: StandardSchema) {
 ### Graceful Degradation
 
 ```typescript
-function validateContentSafe(content: string, schema: StandardSchema) {
+import { checkDocument, parseDocument, type Issue } from '@fieldtest/core';
+import { blogPostSchema } from './schemas';
+
+async function validateContentSafe(content: string): Promise<{ valid: boolean; issues: Issue[] }> {
+  // parseDocument and checkDocument report content problems as issues instead of throwing.
+  // The catch covers a schema or rule that throws.
   try {
-    const result = validateWithSchema(content, schema);
-    
-    if (!result.valid) {
+    const result = await checkDocument(parseDocument(content), { frontmatter: blogPostSchema });
+
+    if (!result.ok) {
       // Log errors but don't fail
-      console.warn('Content has validation issues:', result.errors);
-      return { valid: false, errors: result.errors };
+      console.warn('Content has validation issues:', result.issues);
     }
-    
-    return { valid: true, errors: [] };
+
+    return { valid: result.ok, issues: result.issues };
   } catch (error) {
     console.error('Validation error:', error);
-    return { valid: false, errors: [{ field: 'unknown', message: 'Validation failed', code: 'UNKNOWN' }] };
+    return {
+      valid: false,
+      issues: [{ message: 'Validation failed', path: [], severity: 'error', source: 'data' }]
+    };
   }
 }
 ```
@@ -467,64 +478,47 @@ Catch errors early by validating during the build process, not at runtime.
 
 ### 2. Use TypeScript
 
-Combine FieldTest with TypeScript for maximum type safety:
+Write schemas with a library that infers types, and derive the front matter type from the schema so the check and the type cannot drift apart:
 
 ```typescript
-import type { StandardSchemaV1, FieldTestDocument } from '@fieldtest/core';
+import { z } from 'zod';
 
-const schema: StandardSchemaV1 = {
-  // TypeScript ensures correct structure
-  version: '1',
-  name: 'blog-post',
-  fields: {
-    title: { type: 'string', required: true }
-  }
-};
+export const blogPostSchema = z.object({
+  title: z.string(),
+  author: z.string()
+});
+
+export type BlogPostFrontmatter = z.infer<typeof blogPostSchema>;
 ```
+
+`@fieldtest/core` exports the `StandardSchemaV1` type if you want to accept any Standard Schema library in your own helpers.
 
 ### 3. Create Reusable Validation Utilities
 
 ```typescript
 // lib/validation.ts
-import { validateWithSchema, loadUserSchema } from '@fieldtest/core';
-import type { StandardSchemaV1 } from '@fieldtest/core';
+import { checkDocument, formatIssues, parseDocument, type StandardSchemaV1 } from '@fieldtest/core';
 
-export function createValidator(schema: StandardSchemaV1) {
-  const loadedSchema = loadUserSchema(schema);
-  
-  return function validate(content: string) {
-    const result = validateWithSchema(content, loadedSchema);
-    
-    if (!result.valid) {
-      throw new Error(
-        `Validation failed:\n${result.errors.map(e => `  - ${e.field}: ${e.message}`).join('\n')}`
-      );
+export function createValidator(frontmatter: StandardSchemaV1) {
+  return async function validate(content: string, path?: string) {
+    const result = await checkDocument(parseDocument(content, { path }), { frontmatter });
+
+    if (!result.ok) {
+      throw new Error(`Validation failed:\n${formatIssues(result.issues)}`);
     }
-    
+
     return result;
   };
 }
 
 // Usage
 const validateBlogPost = createValidator(blogPostSchema);
-validateBlogPost(content);
+await validateBlogPost(content);
 ```
 
-### 4. Cache Loaded Schemas
+### 4. Define Schemas Once
 
-```typescript
-const schemaCache = new Map();
-
-function getCachedSchema(schemaDefinition: StandardSchemaV1) {
-  const key = schemaDefinition.name;
-  
-  if (!schemaCache.has(key)) {
-    schemaCache.set(key, loadUserSchema(schemaDefinition));
-  }
-  
-  return schemaCache.get(key);
-}
-```
+A schema is a plain value, so define it in one module (`src/schemas.ts`) and import it from your build script, your pages, and your API routes. There is no loading step to cache.
 
 ---
 
