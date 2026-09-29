@@ -5,6 +5,16 @@ All notable changes to FieldTest will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-09-29
+
+### Security
+
+- `parseMarkdown` no longer executes JavaScript front matter. gray-matter's default engines ran `---js` / `---javascript` front matter through `eval`; FieldTest now rejects it with an error. Anyone parsing Markdown they didn't write should upgrade.
+
+### Fixed
+
+- README examples called `loadUserSchema`, which isn't exported. Pass a Standard Schema (such as a zod schema) straight to `validateWithSchema`. The example also declared `date` as a string, but YAML parses `2025-01-01` as a Date; it now uses `z.coerce.date()`.
+
 ## [1.0.0] - 2025-10-05
 
 ### Added

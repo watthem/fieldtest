@@ -1,6 +1,6 @@
 {
 	"name": "@fieldtest/core",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Open source validation toolkit for data pipelines, APIs, and integrations. Built with TypeScript for modern development workflows.",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",

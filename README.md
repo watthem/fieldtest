@@ -76,17 +76,16 @@ pnpm add @fieldtest/core
 ### Validate your first document
 
 ```ts
-import { loadUserSchema, parseMarkdown, validateWithSchema, z } from "@fieldtest/core";
+import { parseMarkdown, validateWithSchema, z } from "@fieldtest/core";
 
 const blogSchema = z.object({
   title: z.string(),
-  date: z.string(),
+  date: z.coerce.date(), // YAML reads 2025-01-01 as a Date
   tags: z.array(z.string()).optional(),
 });
 
-const schema = loadUserSchema(blogSchema);
 const doc = parseMarkdown(`---\ntitle: Hello\ndate: 2025-01-01\n---\nContent`);
-const result = await validateWithSchema(schema, doc.frontmatter, { throwOnError: true });
+const result = await validateWithSchema(blogSchema, doc.frontmatter, { throwOnError: true });
 ```
 
 ## Documentation
