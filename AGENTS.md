@@ -35,3 +35,12 @@ When reviewing a PR, flag:
 - Any executable front-matter engine or custom YAML tag enabled in a parser (for example `gray-matter` with default engines, `eval`-style loaders).
 - zod peer-dependency drift: `@fieldtest/core` and `@fieldtest/registry` use zod 4; a package pinning a different zod major, or making zod a hard dependency of core, needs justification.
 - Breaking changes to exported API (`packages/core/src/index.ts` and other package entry points) without a `CHANGELOG.md` entry.
+
+## Branches and releases
+
+Many sessions (Claude, Codex, the owner) work in this repo at once. `main` is protected: change it only by pull request, squash-merged, and never force-push.
+
+- One branch per task, named `<actor>/<slug>` (`claude/…`, `codex/…`, `owner/…`). Only that actor pushes to it.
+- Use a separate git worktree per concurrent session; never share a checkout.
+- Branches delete on merge. Delete your own leftover branch when you are done.
+- Agents never publish (`npm publish`, releases, deploys to production). A release is a tag the owner pushes.
