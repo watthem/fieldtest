@@ -30,11 +30,13 @@ GitHub issues and Projects on `watthem/fieldtest`. Forage was retired on 2026-09
 
 ## Code Review Rules
 
-When reviewing a PR, flag:
+Codex reviews each PR when it opens (exhaustive). When reviewing a PR, flag:
 
 - Any executable front-matter engine or custom YAML tag enabled in a parser (for example `gray-matter` with default engines, `eval`-style loaders).
 - zod peer-dependency drift: `@fieldtest/core` and `@fieldtest/registry` use zod 4; a package pinning a different zod major, or making zod a hard dependency of core, needs justification.
 - Breaking changes to exported API (`packages/core/src/index.ts` and other package entry points) without a `CHANGELOG.md` entry.
+- Docs and examples that mix the 1.x and 2.0 APIs, or show an API the current entry points no longer export (`docs/`, `README.md`, `packages/examples/`).
+- Changes to the payload regression test in `packages/core/tests/security.test.ts` that weaken or remove a case.
 
 ## Branches and releases
 
