@@ -5,11 +5,11 @@ All notable changes to FieldTest will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2026-10-20
 
 ### Added
 
-- `@fieldtest/core/check`: a second entry point with only `check`, `formatIssues`, `hasErrors`, `toIssues` and the types. It does not import `yaml`, so a consumer that only validates data against a Standard Schema no longer bundles the YAML parser. In the matchstick-tte widget host build this took the widget chunk from 334,980 to 306,587 bytes (gzip 104,241 to 94,088). The main entry is unchanged; nothing is removed or renamed. A release is for the owner to tag (2.1.0, additive).
+- `@fieldtest/core/check`: a second entry point with only `check`, `formatIssues`, `hasErrors`, `toIssues` and the types. It does not import `yaml`, so a consumer that only validates data against a Standard Schema no longer bundles the YAML parser. In the matchstick-tte widget host build this took the widget chunk from 334,980 to 306,587 bytes (gzip 104,241 to 94,088). The main entry is unchanged; nothing is removed or renamed.
 
 ## [2.0.0] - 2026-09-29
 
