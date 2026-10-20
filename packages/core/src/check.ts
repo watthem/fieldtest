@@ -51,3 +51,4 @@ export async function check<S extends StandardSchemaV1>(
 	}
 	return { ok: true, value: result.value as StandardSchemaV1.InferOutput<S>, issues: [] };
 }
+export type * from "./types";

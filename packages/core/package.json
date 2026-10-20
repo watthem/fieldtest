@@ -16,6 +16,16 @@
 				"default": "./dist/index.js"
 			}
 		},
+		"./check": {
+			"import": {
+				"types": "./dist/check.d.mts",
+				"default": "./dist/check.mjs"
+			},
+			"require": {
+				"types": "./dist/check.d.ts",
+				"default": "./dist/check.js"
+			}
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,

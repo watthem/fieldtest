@@ -24,7 +24,7 @@ const r = await check(schema, record); // { ok: true, value } | { ok: false, iss
 
 - Front matter is parsed as YAML 1.2 data and never executed.
 - Parsing never throws: invalid YAML is an issue with the file line.
-- One dependency: `yaml`.
+- One dependency: `yaml`. Only validating data? `import { check, formatIssues } from "@fieldtest/core/check"` skips it, which matters for browser bundles.
 
 API: [docs/reference/api.md](https://github.com/watthem/fieldtest/blob/main/docs/reference/api.md). Upgrading from 1.x: [MIGRATING.md](https://github.com/watthem/fieldtest/blob/main/MIGRATING.md).
 
